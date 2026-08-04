@@ -5,13 +5,12 @@
 <title>기사 성준의 미로 모험</title>
 
 <style>
-
 body{
     margin:0;
     background:#000;
     overflow:hidden;
-    font-family:"Malgun Gothic";
     color:white;
+    font-family:"Malgun Gothic";
 }
 
 #info{
@@ -31,8 +30,7 @@ canvas{
     position:absolute;
     right:20px;
     top:20px;
-    border:4px solid gold;
-    background:black;
+    border:3px solid gold;
 }
 
 #message{
@@ -44,7 +42,6 @@ canvas{
     color:gold;
     display:none;
 }
-
 </style>
 
 </head>
@@ -90,13 +87,6 @@ y:6.5
 };
 
 
-let item={
-x:4.5,
-y:5.5,
-active:true
-};
-
-
 
 let map=[
 
@@ -112,7 +102,6 @@ let map=[
 [1,1,1,1,1,1,1,1,1,1]
 
 ];
-
 
 
 let keys={};
@@ -135,17 +124,14 @@ let ny=player.y;
 
 
 if(keys["ArrowUp"]){
-
 nx+=Math.cos(player.dir)*speed;
 ny+=Math.sin(player.dir)*speed;
-
 }
 
-if(keys["ArrowDown"]){
 
+if(keys["ArrowDown"]){
 nx-=Math.cos(player.dir)*speed;
 ny-=Math.sin(player.dir)*speed;
-
 }
 
 
@@ -159,110 +145,16 @@ player.dir+=0.06;
 
 
 if(map[Math.floor(ny)][Math.floor(nx)]!=1){
-
 player.x=nx;
 player.y=ny;
-
 }
 
 }
 
-
-
-function monsterMove(){
-
-
-if(stage<10)return;
-
-
-let dx=player.x-monster.x;
-let dy=player.y-monster.y;
-
-let d=Math.sqrt(dx*dx+dy*dy);
-
-
-if(d<5){
-
-monster.x+=dx/d*0.002;
-monster.y+=dy/d*0.002;
-
-}
-
-
-if(d<0.5){
-
-hp-=1;
-
-document.getElementById("hp").innerHTML=hp;
-
-
-if(hp<=0){
-
-gameOver();
-
-}
-
-}
-
-
-}
-
-
-
-function itemCheck(){
-
-let d=Math.hypot(
-player.x-item.x,
-player.y-item.y
-);
-
-
-if(d<0.5&&item.active){
-
-hp=Math.min(100,hp+30);
-
-item.active=false;
-
-}
-
-}
-
-
-
-function goal(){
-
-let d=Math.hypot(
-player.x-8.5,
-player.y-1.5
-);
-
-
-if(d<0.5){
-
-stage++;
-
-document.getElementById("stage").innerHTML=stage;
-
-player.x=1.5;
-player.y=1.5;
-
-
-if(stage>20){
-
-document.getElementById("message").style.display="block";
-document.getElementById("message").innerHTML=
-"👑 공주 구출 성공!";
-
-}
-
-}
-
-}
 
 
 
 function drawMini(){
-
 
 let size=22;
 
@@ -270,14 +162,17 @@ let size=22;
 mctx.clearRect(0,0,220,220);
 
 
-for(let y=0;y<10;y++){
 
-for(let x=0;x<10;x++){
+for(let y=0;y<map.length;y++){
+
+for(let x=0;x<map[y].length;x++){
 
 
-mctx.fillStyle=
-map[y][x]==1?
-"#333":"#ddd";
+if(map[y][x]==1)
+mctx.fillStyle="#222";
+
+else
+mctx.fillStyle="#ddd";
 
 
 mctx.fillRect(
@@ -292,52 +187,55 @@ size
 }
 
 
-// 공주
 
-mctx.fillStyle="gold";
+// 👸 공주 위치
 
-mctx.fillRect(
-8*size,
-1*size,
-size,
-size
+mctx.font="20px Arial";
+mctx.textAlign="center";
+mctx.textBaseline="middle";
+
+
+mctx.fillText(
+"👸",
+8*size+size/2,
+1*size+size/2
 );
 
 
-// 기사
 
-mctx.fillStyle="red";
+// ⚔️ 기사 위치
 
-mctx.beginPath();
-
-mctx.arc(
+mctx.fillText(
+"⚔️",
 player.x*size,
-player.y*size,
-6,
-0,
-Math.PI*2
+player.y*size
 );
 
-mctx.fill();
 
 
-// 몬스터
+// 👹 10스테이지 몬스터
 
 if(stage>=10){
 
-mctx.fillStyle="purple";
-
-mctx.beginPath();
-
-mctx.arc(
+mctx.fillText(
+"👹",
 monster.x*size,
-monster.y*size,
-6,
-0,
-Math.PI*2
+monster.y*size
 );
 
-mctx.fill();
+}
+
+
+
+// 👿 15스테이지 보스
+
+if(stage>=15){
+
+mctx.fillText(
+"👿",
+monster.x*size,
+monster.y*size
+);
 
 }
 
@@ -372,14 +270,10 @@ distance+=0.02;
 
 
 let rx=
-player.x+
-Math.cos(angle)*distance;
-
+player.x+Math.cos(angle)*distance;
 
 let ry=
-player.y+
-Math.sin(angle)*distance;
-
+player.y+Math.sin(angle)*distance;
 
 
 if(map[Math.floor(ry)][Math.floor(rx)]==1)
@@ -387,7 +281,6 @@ break;
 
 
 }
-
 
 
 let h=650/(distance+0.05);
@@ -409,18 +302,6 @@ h
 
 }
 
-
-}
-
-
-
-function gameOver(){
-
-document.getElementById("message").style.display="block";
-
-document.getElementById("message").innerHTML=
-"💀 기사 성준 패배";
-
 }
 
 
@@ -428,12 +309,6 @@ document.getElementById("message").innerHTML=
 function loop(){
 
 move();
-
-monsterMove();
-
-itemCheck();
-
-goal();
 
 draw();
 
