@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>기사 성준의 미로 모험</title>
+<title>기사 성준의 미로 대모험</title>
 
 <style>
 
@@ -32,6 +32,7 @@ canvas{
     right:20px;
     top:20px;
     border:4px solid gold;
+    background:black;
 }
 
 #message{
@@ -48,16 +49,13 @@ canvas{
 
 </head>
 
-
 <body>
 
 
 <div id="info">
-
 ⚔️ 기사 성준 |
 ❤️ HP : <span id="hp">100</span> |
 🏰 Stage : <span id="stage">1</span>
-
 </div>
 
 
@@ -88,100 +86,10 @@ let hp=100;
 
 
 let player={
-
 x:1.5,
 y:1.5,
 dir:0
-
 };
-
-
-
-// 스테이지 데이터
-
-let stages=[
-
-{
-
-map:[
-
-[1,1,1,1,1,1,1,1,1,1],
-[1,0,0,0,0,1,0,0,2,1],
-[1,0,1,1,0,1,0,1,1,1],
-[1,0,0,1,0,0,0,0,0,1],
-[1,0,1,1,1,1,1,1,0,1],
-[1,0,0,0,0,0,0,1,0,1],
-[1,1,1,1,1,1,0,1,0,1],
-[1,0,0,0,0,1,0,0,0,1],
-[1,0,0,0,0,0,0,1,0,1],
-[1,1,1,1,1,1,1,1,1,1]
-
-],
-
-princess:{
-x:8.5,
-y:1.5
-},
-
-monster:{
-x:7.5,
-y:6.5
-},
-
-item:{
-x:4.5,
-y:5.5
-}
-
-},
-
-
-{
-
-map:[
-
-[1,1,1,1,1,1,1,1,1,1],
-[1,0,1,0,0,0,0,1,0,1],
-[1,0,1,0,1,1,0,1,0,1],
-[1,0,0,0,0,1,0,0,2,1],
-[1,1,1,1,0,1,1,1,1,1],
-[1,0,0,0,0,0,0,1,0,1],
-[1,0,1,1,1,1,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,1,0,1,0,1],
-[1,1,1,1,1,1,1,1,1,1]
-
-],
-
-princess:{
-x:8.5,
-y:3.5
-},
-
-monster:{
-x:6.5,
-y:7.5
-},
-
-item:{
-x:2.5,
-y:5.5
-}
-
-}
-
-];
-
-
-
-let map=stages[0].map;
-
-
-let princess=stages[0].princess;
-
-let monster=stages[0].monster;
-
-let item=stages[0].item;
 
 
 
@@ -195,12 +103,82 @@ e=>keys[e.key]=true);
 document.addEventListener("keyup",
 e=>keys[e.key]=false);
 
+
+
+// =============================
+// 20개 스테이지 생성
+// =============================
+
+
+let stages=[];
+
+
+for(let i=0;i<20;i++){
+
+
+let map=[
+
+[1,1,1,1,1,1,1,1,1,1],
+[1,0,0,0,1,0,0,0,2,1],
+[1,0,1,0,1,0,1,0,1,1],
+[1,0,1,0,0,0,1,0,0,1],
+[1,0,1,1,1,0,1,1,0,1],
+[1,0,0,0,0,0,0,1,0,1],
+[1,1,1,1,1,1,0,1,0,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,0,1,0,1,0,1,0,0,1],
+[1,1,1,1,1,1,1,1,1,1]
+
+];
+
+
+
+stages.push({
+
+map:map,
+
+princess:{
+x:8.5,
+y:1.5
+},
+
+item:{
+x:4.5,
+y:5.5,
+active:true
+},
+
+monster:{
+x:7.5,
+y:7.5
+},
+
+hasMonster:i>=9
+
+});
+
+
+}
+
+
+
+let map=stages[0].map;
+
+
+let princess=stages[0].princess;
+
+let item=stages[0].item;
+
+let monster=stages[0].monster;
+
 function move(){
 
 let speed=0.07;
 
+
 let nx=player.x;
 let ny=player.y;
+
 
 
 if(keys["ArrowUp"]){
@@ -211,6 +189,7 @@ ny+=Math.sin(player.dir)*speed;
 }
 
 
+
 if(keys["ArrowDown"]){
 
 nx-=Math.cos(player.dir)*speed;
@@ -219,11 +198,13 @@ ny-=Math.sin(player.dir)*speed;
 }
 
 
+
 if(keys["ArrowLeft"]){
 
 player.dir-=0.06;
 
 }
+
 
 
 if(keys["ArrowRight"]){
@@ -236,7 +217,7 @@ player.dir+=0.06;
 
 if(
 map[Math.floor(ny)] &&
-map[Math.floor(ny)][Math.floor(nx)]!=1
+map[Math.floor(ny)][Math.floor(nx)]!==1
 ){
 
 player.x=nx;
@@ -250,11 +231,14 @@ player.y=ny;
 
 
 
-// 👸 공주 구출
+// =====================
+// 공주 구출
+// =====================
 
 function checkPrincess(){
 
-let d=Math.hypot(
+
+let distance=Math.hypot(
 
 player.x-princess.x,
 
@@ -264,7 +248,7 @@ player.y-princess.y
 
 
 
-if(d<0.5){
+if(distance<0.5){
 
 
 stage++;
@@ -274,12 +258,10 @@ document.getElementById("stage").innerHTML=stage;
 
 
 
-if(stage>stages.length){
+if(stage>20){
 
-document.getElementById("message").style.display="block";
 
-document.getElementById("message").innerHTML=
-"👑 모든 공주 구출 성공!";
+victory();
 
 return;
 
@@ -287,74 +269,118 @@ return;
 
 
 
-// 다음 스테이지 적용
 
-map=stages[stage-1].map;
-
-
-princess=stages[stage-1].princess;
+map=
+stages[stage-1].map;
 
 
-monster=stages[stage-1].monster;
+
+princess=
+stages[stage-1].princess;
 
 
-item=stages[stage-1].item;
+
+item=
+stages[stage-1].item;
+
+
+
+monster=
+stages[stage-1].monster;
 
 
 
 player.x=1.5;
+
 player.y=1.5;
 
 
 
 alert(
-"👸 공주 구출!\n다음 스테이지 시작!"
+"👸 공주 구출!\n다음 스테이지!"
 );
 
 
 
 }
 
+
 }
 
 
 
 
-// 👹 몬스터
+
+// =====================
+// 몬스터 AI
+// =====================
+
 
 function monsterMove(){
 
 
-if(stage<10)return;
+
+if(!stages[stage-1].hasMonster)
+
+return;
 
 
-let dx=player.x-monster.x;
 
-let dy=player.y-monster.y;
+let dx=
+player.x-monster.x;
 
 
-let d=Math.sqrt(
-dx*dx+dy*dy
+let dy=
+player.y-monster.y;
+
+
+
+let distance=
+Math.sqrt(
+dx*dx+
+dy*dy
 );
 
 
 
-if(d<5){
+if(distance<8){
 
 
-monster.x+=dx/d*0.002;
+let speed=0.01;
 
-monster.y+=dy/d*0.002;
+
+let nx=
+monster.x+
+(dx/distance)*speed;
+
+
+let ny=
+monster.y+
+(dy/distance)*speed;
+
+
+
+if(
+map[Math.floor(ny)] &&
+map[Math.floor(ny)][Math.floor(nx)]!==1
+){
+
+monster.x=nx;
+
+monster.y=ny;
+
+}
 
 
 }
 
 
 
-if(d<0.5){
+if(distance<0.45){
 
 
-hp-=0.3;
+hp-=0.5;
+
 
 
 document.getElementById("hp").innerHTML=
@@ -379,19 +405,21 @@ gameOver();
 
 
 
+// =====================
+// 체력 아이템
+// =====================
 
-
-// 💖 아이템
 
 function itemCheck(){
 
 
 if(!item.active)
+
 return;
 
 
 
-let d=Math.hypot(
+let distance=Math.hypot(
 
 player.x-item.x,
 
@@ -401,7 +429,7 @@ player.y-item.y
 
 
 
-if(d<0.5){
+if(distance<0.5){
 
 
 hp=Math.min(
@@ -419,16 +447,20 @@ Math.floor(hp);
 item.active=false;
 
 
-}
 
 }
 
 
+}
 
 
 
 
-// 🗺️ 미니맵
+
+// =====================
+// 미니맵
+// =====================
+
 
 function drawMini(){
 
@@ -457,6 +489,7 @@ map[y][x]==1?
 "#ddd";
 
 
+
 mctx.fillRect(
 
 x*size,
@@ -472,13 +505,16 @@ size
 
 }
 
+
 }
 
 
 
-// 👸 공주
+mctx.font="18px Arial";
 
-mctx.font="20px Arial";
+
+
+// 공주
 
 mctx.fillText(
 
@@ -492,11 +528,11 @@ princess.y*size
 
 
 
-// ⚔️ 기사
+// 기사
 
 mctx.fillText(
 
-"⚔️",
+"🔴",
 
 player.x*size,
 
@@ -506,10 +542,9 @@ player.y*size
 
 
 
-// 💖 아이템
+// 아이템
 
 if(item.active){
-
 
 mctx.fillText(
 
@@ -521,14 +556,13 @@ item.y*size
 
 );
 
-
 }
 
 
 
-// 👹 몬스터
+// 몬스터
 
-if(stage>=10){
+if(stages[stage-1].hasMonster){
 
 
 mctx.fillText(
@@ -574,14 +608,16 @@ player.dir-0.7+
 (i/rays)*1.4;
 
 
+
 let distance=0;
 
 
 
-while(distance<25){
+while(distance<20){
 
 
 distance+=0.02;
+
 
 
 let rx=
@@ -614,17 +650,18 @@ let height=
 
 
 
-let shade=
-120-distance*4;
+let color=
+120-distance*5;
 
 
-if(shade<20)
-shade=20;
+
+if(color<20)
+color=20;
 
 
 
 ctx.fillStyle=
-`rgb(${shade},${shade},${shade})`;
+`rgb(${color},${color},${color})`;
 
 
 
@@ -645,7 +682,7 @@ height
 
 
 
-// 기사 표시
+// 화면 중앙 기사
 
 ctx.font="45px Arial";
 
@@ -670,8 +707,8 @@ document.getElementById("message").style.display="block";
 
 
 document.getElementById("message").innerHTML=
-"💀 기사 성준 패배";
 
+"💀 기사 성준 패배";
 
 
 }
@@ -687,8 +724,8 @@ document.getElementById("message").style.display="block";
 
 
 document.getElementById("message").innerHTML=
-"👑 성준이 모든 공주를 구출했다!";
 
+"👑 성준이 20개의 미로를 모두 통과했다!";
 
 
 }
@@ -696,12 +733,11 @@ document.getElementById("message").innerHTML=
 
 
 
-
-
 function loop(){
 
 
-if(stage>stages.length){
+
+if(stage>20){
 
 victory();
 
@@ -729,7 +765,9 @@ draw();
 drawMini();
 
 
+
 requestAnimationFrame(loop);
+
 
 
 }
@@ -740,9 +778,7 @@ requestAnimationFrame(loop);
 loop();
 
 
-
 </script>
-
 
 </body>
 
