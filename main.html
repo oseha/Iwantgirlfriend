@@ -1,1 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>기사 성준의 미로</title>
 
+<style>
+body{
+    background:#1d1d1d;
+    color:white;
+    text-align:center;
+    font-family:Arial;
+}
+
+h1{
+    margin-top:20px;
+}
+
+#maze{
+    display:grid;
+    grid-template-columns:repeat(10,50px);
+    grid-template-rows:repeat(10,50px);
+    width:500px;
+    margin:30px auto;
+    border:5px solid white;
+}
+
+.cell{
+    width:50px;
+    height:50px;
+}
+
+.wall{
+    background:#444;
+}
+
+.path{
+    background:#dddddd;
+}
+
+.player{
+    background:#2ecc71;
+}
+
+.goal{
+    background:gold;
+}
+</style>
+
+</head>
+<body>
+
+<h1>⚔️ 기사 성준의 미로</h1>
+
+<p>방향키(← ↑ → ↓)를 눌러 공주에게 가세요.</p>
+
+<div id="maze"></div>
+
+<script>
+
+const maze=[
+[0,0,0,1,0,0,0,0,0,0],
+[1,1,0,1,0,1,1,1,1,0],
+[0,0,0,1,0,0,0,0,1,0],
+[0,1,1,1,1,1,1,0,1,0],
+[0,0,0,0,0,0,1,0,0,0],
+[1,1,1,1,1,0,1,1,1,0],
+[0,0,0,0,1,0,0,0,1,0],
+[0,1,1,0,1,1,1,0,1,0],
+[0,0,1,0,0,0,0,0,1,2],
+[0,0,0,0,1,1,1,0,0,0]
+];
+
+let player={
+x:0,
+y:0
+};
+
+const mazeDiv=document.getElementById("maze");
+
+function draw(){
+
+mazeDiv.innerHTML="";
+
+for(let y=0;y<10;y++){
+
+for(let x=0;x<10;x++){
+
+const cell=document.createElement("div");
+cell.classList.add("cell");
+
+if(player.x==x && player.y==y){
+
+cell.classList.add("player");
+cell.innerHTML="⚔️";
+
+}else if(maze[y][x]==1){
+
+cell.classList.add("wall");
+
+}else if(maze[y][x]==2){
+
+cell.classList.add("goal");
+cell.innerHTML="👸";
+
+}else{
+
+cell.classList.add("path");
+
+}
+
+mazeDiv.appendChild(cell);
+
+}
+
+}
+
+}
+
+draw();
+
+document.addEventListener("keydown",function(e){
+
+let nx=player.x;
+let ny=player.y;
+
+if(e.key=="ArrowUp") ny--;
+if(e.key=="ArrowDown") ny++;
+if(e.key=="ArrowLeft") nx--;
+if(e.key=="ArrowRight") nx++;
+
+if(nx<0||ny<0||nx>9||ny>9) return;
+
+if(maze[ny][nx]==1) return;
+
+player.x=nx;
+player.y=ny;
+
+draw();
+
+if(maze[ny][nx]==2){
+
+setTimeout(()=>{
+alert("🎉 기사 성준이 공주를 구출했습니다!");
+location.href="index.html";
+},100);
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
