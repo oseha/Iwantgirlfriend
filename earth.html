@@ -13,22 +13,23 @@ body{
 }
 
 
-#world{
+#map{
 
     width:100vw;
     height:100vh;
 
     position:relative;
 
-    background-image:url("worldmap.png");
+    background-image:url("image.png");
 
-    background-size:100% 100%;
-
-    background-repeat:no-repeat;
+    background-size:cover;
 
     background-position:center;
 
+    background-repeat:no-repeat;
+
 }
+
 
 
 /* 제목 */
@@ -38,18 +39,17 @@ body{
 position:absolute;
 
 top:20px;
-
 left:50%;
 
 transform:translateX(-50%);
-
-color:white;
 
 font-size:35px;
 
 font-weight:bold;
 
-background:rgba(0,0,0,0.6);
+color:white;
+
+background:rgba(0,0,0,0.65);
 
 padding:15px 30px;
 
@@ -59,7 +59,7 @@ border-radius:15px;
 
 
 
-/* 지진 표시 */
+/* 지진 발생 표시 */
 
 .quake{
 
@@ -76,13 +76,12 @@ border-radius:50%;
 box-shadow:
 0 0 20px red;
 
-animation:shake 1s infinite;
+animation:pulse 1s infinite;
 
 }
 
 
-
-@keyframes shake{
+@keyframes pulse{
 
 0%{
 transform:scale(1);
@@ -99,6 +98,8 @@ transform:scale(1);
 }
 
 
+
+/* 설명 */
 
 #info{
 
@@ -120,7 +121,6 @@ border-radius:10px;
 
 }
 
-
 </style>
 
 </head>
@@ -129,7 +129,7 @@ border-radius:10px;
 <body>
 
 
-<div id="world">
+<div id="map">
 
 
 <div id="title">
@@ -137,28 +137,7 @@ border-radius:10px;
 </div>
 
 
-
-<!-- 지진 발생 위치 -->
-
-<!-- 일본 -->
-
-<div class="quake"
-style="left:76%;top:43%;">
-</div>
-
-
-<!-- 인도네시아 -->
-
-<div class="quake"
-style="left:75%;top:57%;">
-</div>
-
-
-<!-- 칠레 -->
-
-<div class="quake"
-style="left:30%;top:65%;">
-</div>
+<!-- 지진 위치 -->
 
 
 <!-- 미국 서부 -->
@@ -168,26 +147,53 @@ style="left:22%;top:43%;">
 </div>
 
 
+<!-- 일본 -->
+
+<div class="quake"
+style="left:83%;top:45%;">
+</div>
+
+
+<!-- 인도네시아 -->
+
+<div class="quake"
+style="left:78%;top:60%;">
+</div>
+
+
+<!-- 칠레 -->
+
+<div class="quake"
+style="left:30%;top:67%;">
+</div>
+
+
 <!-- 터키 -->
 
 <div class="quake"
-style="left:60%;top:40%;">
+style="left:61%;top:40%;">
+</div>
+
+
+<!-- 알래스카 -->
+
+<div class="quake"
+style="left:18%;top:28%;">
 </div>
 
 
 
 <div id="info">
 
-🔴 빨간 점 = 지진 발생 지역<br>
-🌍 배경 = 사용자가 제공한 세계지도<br>
-🌋 판 경계 주변 주요 지진 지역 표시
+🔴 빨간 점 : 지진 발생 지역<br>
+🌋 판 경계 주변 주요 지진 표시<br>
+🌎 USGS 지도 기반 모델
 
 </div>
 
 
 
 </div>
-
 
 
 </body>
