@@ -1,106 +1,50 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-
 <meta charset="UTF-8">
-<title>기사 성준의 미로 대모험</title>
-
+<title>기사 성준 메인</title>
 
 <style>
 
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-
-
 body{
-
     height:100vh;
-
-    background:
-    linear-gradient(#020024,#090979,#00d4ff);
-
+    margin:0;
+    background:linear-gradient(#05001a,#1b4965);
     color:white;
-
-    font-family:"Malgun Gothic",sans-serif;
-
+    font-family:"Malgun Gothic";
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
+    text-align:center;
 }
 
 
+.box{
 
-.container{
-
-    width:850px;
-
-    background:rgba(0,0,0,0.55);
-
+    background:rgba(0,0,0,0.6);
     padding:50px;
-
-    border-radius:40px;
-
+    border-radius:30px;
     border:5px solid gold;
 
-    text-align:center;
-
-    box-shadow:0 0 50px black;
-
 }
-
 
 
 h1{
 
+    color:gold;
     font-size:55px;
 
-    color:#ffd700;
+}
 
-    text-shadow:
 
-    0 0 15px orange,
+.hero{
 
-    0 0 30px red;
-
-    margin-bottom:30px;
+    font-size:100px;
 
 }
 
 
-
-.story{
-
-    font-size:25px;
-
-    line-height:1.8;
-
-    margin-bottom:40px;
-
-}
-
-
-
-.character{
-
-    font-size:90px;
-
-    margin-bottom:20px;
-
-}
-
-
-
-.buttons button{
-
+button{
 
     display:block;
 
@@ -110,65 +54,30 @@ h1{
 
     padding:18px;
 
-    border:none;
-
-    border-radius:40px;
-
-    font-size:28px;
+    font-size:25px;
 
     font-weight:bold;
 
-    cursor:pointer;
+    border-radius:40px;
+
+    border:none;
 
     background:gold;
 
-    transition:0.3s;
-
+    cursor:pointer;
 
 }
 
 
-
-.buttons button:hover{
-
-    transform:scale(1.1);
+button:hover{
 
     background:orange;
 
-}
-
-
-
-.back{
-
-    position:absolute;
-
-    left:60px;
-
-    bottom:50px;
-
-    font-size:100px;
+    transform:scale(1.1);
 
 }
-
-
-
-.castle{
-
-    position:absolute;
-
-    right:60px;
-
-    bottom:40px;
-
-    font-size:150px;
-
-}
-
-
 
 </style>
-
 
 </head>
 
@@ -176,66 +85,30 @@ h1{
 <body>
 
 
+<div class="box">
 
-<div class="back">
+
+<div class="hero">
 
 ⚔️🛡️
 
 </div>
 
 
-
-<div class="castle">
-
-🏰
-
-</div>
-
-
-
-<div class="container">
-
-
-
-<div class="character">
-
-👑⚔️👸
-
-</div>
-
-
-
 <h1>
-
-기사 성준의 미로 대모험
-
+기사 성준의 모험
 </h1>
 
 
+<p>
 
-<div class="story">
+원하는 메뉴를 선택하세요
 
-
-용감한 기사 <b>성준</b>은<br>
-
-위험한 미로를 통과하여<br>
-
-마왕에게 붙잡힌 공주를 구출해야 합니다.<br><br>
-
-
-모험을 시작하거나<br>
-
-게임 정보를 확인해보세요!
-
-</div>
+</p>
 
 
 
-
-<div class="buttons">
-
-
-<button onclick="goEarth()">
+<button onclick="location.href='earth.html'">
 
 🌍 지진모델링
 
@@ -243,7 +116,7 @@ h1{
 
 
 
-<button onclick="goExplain()">
+<button onclick="location.href='gamestyle.html'">
 
 📖 게임 설명
 
@@ -251,7 +124,7 @@ h1{
 
 
 
-<button onclick="startGame()">
+<button onclick="location.href='game.html'">
 
 🎮 게임 시작
 
@@ -262,42 +135,5 @@ h1{
 </div>
 
 
-
-</div>
-
-
-
-<script>
-
-
-function goEarth(){
-
-    location.href="earth.html";
-
-}
-
-
-
-function goExplain(){
-
-    location.href="gamestyle.html";
-
-}
-
-
-
-function startGame(){
-
-    location.href="game.html";
-
-}
-
-
-
-</script>
-
-
-
 </body>
-
 </html>
