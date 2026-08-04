@@ -1,19 +1,151 @@
-<div class="container">
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기사 성준의 미로 대모험</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    height:100vh;
+    overflow:hidden;
+    font-family:"Malgun Gothic", sans-serif;
+    background:linear-gradient(to bottom,#0a1835,#23395d,#3c6e71);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+}
+
+.container{
+    text-align:center;
+    z-index:10;
+}
+
+h1{
+    font-size:65px;
+    color:#ffd700;
+    text-shadow:0 0 20px orange;
+    margin-bottom:20px;
+}
+
+h2{
+    font-size:35px;
+    margin-bottom:25px;
+}
+
+p{
+    font-size:22px;
+    line-height:1.8;
+    margin-bottom:40px;
+}
+
+button{
+    padding:18px 55px;
+    font-size:28px;
+    font-weight:bold;
+    border:none;
+    border-radius:50px;
+    background:#ffd700;
+    color:#222;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:orange;
+    transform:scale(1.1);
+}
+
+.knight{
+    position:absolute;
+    left:70px;
+    bottom:80px;
+    font-size:120px;
+    animation:walk 2s infinite alternate;
+}
+
+.castle{
+    position:absolute;
+    right:60px;
+    bottom:60px;
+    font-size:150px;
+}
+
+.princess{
+    position:absolute;
+    right:100px;
+    bottom:180px;
+    font-size:60px;
+}
+
+.star{
+    position:absolute;
+    color:white;
+    animation:twinkle 2s infinite alternate;
+}
+
+@keyframes walk{
+    from{
+        transform:translateX(0px);
+    }
+    to{
+        transform:translateX(30px);
+    }
+}
+
+@keyframes twinkle{
+    from{opacity:.3;}
+    to{opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="star" style="left:10%;top:10%;font-size:20px;">⭐</div>
+<div class="star" style="left:25%;top:20%;font-size:15px;">✨</div>
+<div class="star" style="left:70%;top:12%;font-size:18px;">⭐</div>
+<div class="star" style="left:90%;top:25%;font-size:22px;">✨</div>
 
 <div class="knight">🛡️⚔️</div>
 
-<h1>⚔️ 성준의 미로 대모험 ⚔️</h1>
+<div class="castle">🏰</div>
+<div class="princess">👸</div>
 
-<h2>용감한 기사 성준</h2>
+<div class="container">
+
+<h1>⚔️ 기사 성준의 미로 대모험 ⚔️</h1>
+
+<h2>👑 공주를 구출하라!</h2>
 
 <p>
-용감한 기사 <strong>성준</strong>은<br>
-위험한 미로를 통과하여 성에 갇힌 공주를 구출해야 합니다.<br><br>
+용감한 기사 <b>성준</b>은<br>
+어둠의 미로를 통과하여<br>
+마왕의 성에 갇힌 공주를 구출해야 합니다.<br><br>
 
-수많은 함정과 몬스터를 피해<br>
+몬스터를 피하고,<br>
+함정을 통과하여<br>
 무사히 공주를 구출하세요!
 </p>
 
-<button onclick="startGame()">게임 시작</button>
+<button onclick="startGame()">🎮 게임 시작</button>
 
 </div>
+
+<script>
+function startGame(){
+    alert("기사 성준의 모험이 시작됩니다!");
+    // 실제 게임 화면
+    // location.href="game.html";
+}
+</script>
+
+</body>
+</html>
