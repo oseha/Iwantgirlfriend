@@ -2,45 +2,45 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>기사 성준의 미로 모험</title>
+<title>기사 성준 미로 모험</title>
 
 <style>
 body{
-    margin:0;
-    background:#000;
-    overflow:hidden;
-    color:white;
-    font-family:"Malgun Gothic";
+margin:0;
+background:#000;
+overflow:hidden;
+color:white;
+font-family:Arial;
 }
 
 #info{
-    position:absolute;
-    top:15px;
-    left:20px;
-    z-index:10;
-    font-size:22px;
+position:absolute;
+top:10px;
+left:15px;
+z-index:5;
+font-size:22px;
 }
 
 canvas{
-    display:block;
-    margin:auto;
+display:block;
+margin:auto;
 }
 
-#miniMap{
-    position:absolute;
-    right:20px;
-    top:20px;
-    border:3px solid gold;
+#map{
+position:absolute;
+right:20px;
+top:20px;
+border:3px solid gold;
 }
 
-#message{
-    position:absolute;
-    top:45%;
-    width:100%;
-    text-align:center;
-    font-size:45px;
-    color:gold;
-    display:none;
+#msg{
+position:absolute;
+top:45%;
+width:100%;
+text-align:center;
+font-size:40px;
+color:gold;
+display:none;
 }
 </style>
 
@@ -49,25 +49,24 @@ canvas{
 <body>
 
 <div id="info">
-⚔️ 기사 성준 |
-❤️ HP : <span id="hp">100</span> |
-🏰 Stage : <span id="stage">1</span>
+⚔️ 성준 |
+❤️ <span id="hp">100</span> |
+🏰 <span id="stage">1</span> Stage
 </div>
 
-<canvas id="game" width="900" height="600"></canvas>
+<canvas id="game" width="800" height="600"></canvas>
+<canvas id="map" width="200" height="200"></canvas>
 
-<canvas id="miniMap" width="220" height="220"></canvas>
-
-<div id="message"></div>
+<div id="msg"></div>
 
 
 <script>
 
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
+const c=document.getElementById("game");
+const ctx=c.getContext("2d");
 
-const mini=document.getElementById("miniMap");
-const mctx=mini.getContext("2d");
+const m=document.getElementById("map");
+const mx=m.getContext("2d");
 
 
 let stage=1;
@@ -81,6 +80,12 @@ dir:0
 };
 
 
+let princess={
+x:8.5,
+y:1.5
+};
+
+
 let monster={
 x:7.5,
 y:6.5
@@ -88,13 +93,13 @@ y:6.5
 
 
 
-let map=[
+let maze=[
 
 [1,1,1,1,1,1,1,1,1,1],
 [1,0,0,0,0,1,0,0,2,1],
-[1,0,1,0,0,1,0,1,1,1],
-[1,0,1,0,0,0,0,0,0,1],
-[1,0,1,1,1,1,1,1,0,1],
+[1,0,1,1,0,1,0,1,1,1],
+[1,0,0,1,0,0,0,0,0,1],
+[1,1,0,1,1,1,1,1,0,1],
 [1,0,0,0,0,0,0,1,0,1],
 [1,1,1,1,1,1,0,1,0,1],
 [1,0,0,0,0,1,0,0,0,1],
@@ -104,49 +109,117 @@ let map=[
 ];
 
 
-let keys={};
+let key={};
 
 
-document.addEventListener("keydown",
-e=>keys[e.key]=true);
-
-document.addEventListener("keyup",
-e=>keys[e.key]=false);
+document.onkeydown=e=>key[e.key]=true;
+document.onkeyup=e=>key[e.key]=false;
 
 
 
 function move(){
 
-let speed=0.07;
+let s=0.07;
 
 let nx=player.x;
 let ny=player.y;
 
 
-if(keys["ArrowUp"]){
-nx+=Math.cos(player.dir)*speed;
-ny+=Math.sin(player.dir)*speed;
+if(key["ArrowUp"]){
+nx+=Math.cos(player.dir)*s;
+ny+=Math.sin(player.dir)*s;
 }
 
-
-if(keys["ArrowDown"]){
-nx-=Math.cos(player.dir)*speed;
-ny-=Math.sin(player.dir)*speed;
+if(key["ArrowDown"]){
+nx-=Math.cos(player.dir)*s;
+ny-=Math.sin(player.dir)*s;
 }
 
-
-if(keys["ArrowLeft"])
+if(key["ArrowLeft"])
 player.dir-=0.06;
 
-
-if(keys["ArrowRight"])
+if(key["ArrowRight"])
 player.dir+=0.06;
 
 
 
-if(map[Math.floor(ny)][Math.floor(nx)]!=1){
+if(maze[Math.floor(ny)][Math.floor(nx)]!=1){
+
 player.x=nx;
 player.y=ny;
+
+}
+
+}
+
+
+
+function checkPrincess(){
+
+let d=Math.hypot(
+player.x-princess.x,
+player.y-princess.y
+);
+
+
+if(d<0.5){
+
+stage++;
+
+document.getElementById("stage").innerHTML=stage;
+
+
+alert("👸 공주 구출 성공!");
+
+player.x=1.5;
+player.y=1.5;
+
+
+princess.x=Math.floor(Math.random()*7)+2;
+princess.y=Math.floor(Math.random()*7)+1;
+
+
+if(stage>20){
+
+document.getElementById("msg").style.display="block";
+document.getElementById("msg").innerHTML=
+"👑 모든 공주 구출 성공!";
+
+}
+
+}
+
+}
+
+
+
+function monsterMove(){
+
+if(stage<10)return;
+
+
+let dx=player.x-monster.x;
+let dy=player.y-monster.y;
+
+
+let d=Math.sqrt(dx*dx+dy*dy);
+
+
+if(d<4){
+
+monster.x+=dx/d*0.003;
+monster.y+=dy/d*0.003;
+
+}
+
+
+if(d<0.5){
+
+hp--;
+
+document.getElementById("hp").innerHTML=hp;
+
+
 }
 
 }
@@ -154,32 +227,28 @@ player.y=ny;
 
 
 
-function drawMini(){
+function miniMap(){
 
-let size=22;
-
-
-mctx.clearRect(0,0,220,220);
+let s=20;
 
 
-
-for(let y=0;y<map.length;y++){
-
-for(let x=0;x<map[y].length;x++){
+mx.clearRect(0,0,200,200);
 
 
-if(map[y][x]==1)
-mctx.fillStyle="#222";
+for(let y=0;y<10;y++){
 
-else
-mctx.fillStyle="#ddd";
+for(let x=0;x<10;x++){
+
+mx.fillStyle=
+maze[y][x]?
+"#222":"#ddd";
 
 
-mctx.fillRect(
-x*size,
-y*size,
-size,
-size
+mx.fillRect(
+x*s,
+y*s,
+s,
+s
 );
 
 }
@@ -187,120 +256,58 @@ size
 }
 
 
+// 공주
 
-// 👸 공주 위치
+mx.font="18px Arial";
 
-mctx.font="20px Arial";
-mctx.textAlign="center";
-mctx.textBaseline="middle";
-
-
-mctx.fillText(
+mx.fillText(
 "👸",
-8*size+size/2,
-1*size+size/2
+princess.x*s,
+princess.y*s
 );
 
 
+// 기사
 
-// ⚔️ 기사 위치
-
-mctx.fillText(
-"⚔️",
-player.x*size,
-player.y*size
+mx.fillText(
+"🔴",
+player.x*s,
+player.y*s
 );
 
 
-
-// 👹 10스테이지 몬스터
+// 몬스터
 
 if(stage>=10){
 
-mctx.fillText(
+mx.fillText(
 "👹",
-monster.x*size,
-monster.y*size
-);
-
-}
-
-
-
-// 👿 15스테이지 보스
-
-if(stage>=15){
-
-mctx.fillText(
-"👿",
-monster.x*size,
-monster.y*size
+monster.x*s,
+monster.y*s
 );
 
 }
 
 
 }
+
 
 
 
 function draw(){
 
-
-ctx.fillStyle="#555";
-ctx.fillRect(0,0,900,600);
-
-
-let rays=700;
+ctx.fillStyle="#444";
+ctx.fillRect(0,0,800,600);
 
 
-for(let i=0;i<rays;i++){
+ctx.fillStyle="white";
+ctx.font="40px Arial";
 
-
-let angle=
-player.dir-0.7+i/rays*1.4;
-
-
-let distance=0;
-
-
-while(distance<25){
-
-distance+=0.02;
-
-
-let rx=
-player.x+Math.cos(angle)*distance;
-
-let ry=
-player.y+Math.sin(angle)*distance;
-
-
-if(map[Math.floor(ry)][Math.floor(rx)]==1)
-break;
-
-
-}
-
-
-let h=650/(distance+0.05);
-
-
-ctx.fillStyle=
-`rgb(${120-distance*4},
-${100-distance*3},
-${80-distance*2})`;
-
-
-ctx.fillRect(
-i*1.3,
-300-h/2,
-2,
-h
+ctx.fillText(
+"⚔️",
+380,
+300
 );
-
-
-}
 
 }
 
@@ -310,9 +317,13 @@ function loop(){
 
 move();
 
+checkPrincess();
+
+monsterMove();
+
 draw();
 
-drawMini();
+miniMap();
 
 requestAnimationFrame(loop);
 
@@ -320,7 +331,6 @@ requestAnimationFrame(loop);
 
 
 loop();
-
 
 </script>
 
