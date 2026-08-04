@@ -175,3 +175,237 @@ body{
 <div id="list">
 데이터 불러오는 중...
 </div>
+<script>
+
+
+const map=document.getElementById("map");
+
+const info=document.getElementById("info");
+
+const list=document.getElementById("list");
+
+
+
+// 기존 지진 점 삭제
+
+function clearEarthquakes(){
+
+    document
+    .querySelectorAll(".quake")
+    .forEach(dot=>dot.remove());
+
+}
+
+
+
+// 지진 점 만들기
+
+function createEarthquake(data){
+
+
+    let dot=document.createElement("div");
+
+
+    dot.className="quake";
+
+
+    // 규모가 클수록 크게 표시
+
+    let size=Math.max(12,data.mag*5);
+
+
+
+    dot.style.width=size+"px";
+
+    dot.style.height=size+"px";
+
+
+
+    // 세계지도 좌표 변환
+
+    dot.style.left=
+    ((data.lon+180)/360*100)+"%";
+
+
+
+    dot.style.top=
+    ((90-data.lat)/180*100)+"%";
+
+
+
+
+    dot.onclick=function(){
+
+
+        info.style.display="block";
+
+
+        info.innerHTML=
+
+        "<h2>🌋 지진 정보</h2>"+
+
+        "📍 위치 : "+data.place+
+        "<br><br>"+
+
+        "📏 규모 : M"+data.mag+
+        "<br>"+
+
+        "🌊 깊이 : "+data.depth+" km"+
+        "<br>"+
+
+        "⏰ 발생 시간 : "+data.time;
+
+
+
+    };
+
+
+
+    map.appendChild(dot);
+
+
+}
+
+
+
+
+
+// 실제 지진 데이터 가져오기
+
+function loadEarthquakes(){
+
+
+
+fetch(
+"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+)
+
+
+
+.then(response=>response.json())
+
+
+
+.then(result=>{
+
+
+
+    clearEarthquakes();
+
+
+
+    list.innerHTML=
+    "<b>🌋 최근 실시간 지진</b><br><br>";
+
+
+
+    result.features
+    .slice(0,40)
+    .forEach(item=>{
+
+
+
+        let p=item.properties;
+
+        let c=item.geometry.coordinates;
+
+
+
+        let date=
+        new Date(p.time);
+
+
+
+        let data={
+
+
+            place:p.place,
+
+
+            mag:p.mag || 0,
+
+
+            depth:c[2],
+
+
+            lon:c[0],
+
+
+            lat:c[1],
+
+
+            time:
+            date.toLocaleString("ko-KR")
+
+
+        };
+
+
+
+        createEarthquake(data);
+
+
+
+
+        list.innerHTML+=
+
+
+        "🌋 "+p.place+
+        "<br>"+
+
+        "규모 : M"+p.mag+
+        "<br>"+
+
+        "시간 : "+
+        date.toLocaleString("ko-KR")+
+
+        "<hr>";
+
+
+
+    });
+
+
+
+})
+
+
+
+.catch(error=>{
+
+
+    list.innerHTML=
+    "❌ 실시간 데이터를 불러오지 못했습니다.";
+
+
+});
+
+
+
+}
+
+
+
+// 처음 실행
+
+loadEarthquakes();
+
+
+
+// 1초마다 갱신
+
+setInterval(function(){
+
+
+    loadEarthquakes();
+
+
+},1000);
+
+
+
+</script>
+
+
+</body>
+</html>
