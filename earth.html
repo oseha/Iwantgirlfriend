@@ -8,48 +8,52 @@
 <style>
 
 body{
-margin:0;
-overflow:hidden;
-font-family:"Malgun Gothic";
+    margin:0;
+    overflow:hidden;
+    font-family:"Malgun Gothic";
 }
 
 
 #map{
 
-width:100vw;
-height:100vh;
+    width:100vw;
+    height:100vh;
 
-background-image:url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
+    position:relative;
 
-background-size:cover;
-background-position:center;
+    background-image:url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
 
-position:relative;
+    background-size:cover;
+
+    background-position:center;
+
+    background-repeat:no-repeat;
 
 }
 
 
 
+/* 제목 */
+
 #title{
 
-position:absolute;
+    position:absolute;
 
-top:20px;
-left:50%;
+    top:20px;
 
-transform:translateX(-50%);
+    left:50%;
 
-background:white;
+    transform:translateX(-50%);
 
-padding:15px 30px;
+    background:white;
 
-border-radius:15px;
+    padding:15px 30px;
 
-font-size:32px;
+    border-radius:15px;
 
-font-weight:bold;
+    font-size:35px;
 
-z-index:10;
+    font-weight:bold;
 
 }
 
@@ -59,18 +63,18 @@ z-index:10;
 
 .quake{
 
-position:absolute;
+    position:absolute;
 
-background:red;
+    background:red;
 
-border-radius:50%;
+    border-radius:50%;
 
-box-shadow:
-0 0 20px red;
+    box-shadow:
+    0 0 20px red;
 
-animation:pulse 1.5s infinite;
+    animation:pulse 1.5s infinite;
 
-cursor:pointer;
+    cursor:pointer;
 
 }
 
@@ -78,13 +82,13 @@ cursor:pointer;
 
 @keyframes pulse{
 
-50%{
+    50%{
 
-transform:scale(1.8);
+        transform:scale(1.8);
 
-opacity:.5;
+        opacity:0.5;
 
-}
+    }
 
 }
 
@@ -94,55 +98,56 @@ opacity:.5;
 
 #info{
 
-position:absolute;
+    position:absolute;
 
-right:20px;
+    right:20px;
 
-bottom:20px;
+    bottom:20px;
 
-width:300px;
+    width:320px;
 
-background:white;
+    background:white;
 
-padding:15px;
+    padding:15px;
 
-border-radius:15px;
+    border-radius:15px;
 
-font-size:18px;
+    border:3px solid red;
 
-border:3px solid red;
+    display:none;
 
-display:none;
-
-z-index:20;
+    font-size:18px;
 
 }
 
 
+
+/* 목록 */
 
 #list{
 
-position:absolute;
+    position:absolute;
 
-left:20px;
+    left:20px;
 
-bottom:20px;
+    bottom:20px;
 
-background:white;
+    width:300px;
 
-padding:15px;
+    max-height:300px;
 
-border-radius:15px;
+    overflow:auto;
 
-font-size:16px;
+    background:white;
 
-max-height:250px;
+    padding:15px;
 
-overflow:auto;
+    border-radius:15px;
 
-z-index:10;
+    font-size:16px;
 
 }
+
 
 
 </style>
@@ -155,9 +160,8 @@ z-index:10;
 
 <div id="map">
 
-
 <div id="title">
-🌎 세계 지진 발생 모델링
+🌎 세계 실시간 지진 모델링
 </div>
 
 
@@ -167,11 +171,8 @@ z-index:10;
 
 <div id="info"></div>
 
+
 <div id="list">
-
-<b>최근 주요 지진</b>
-
-<br>
 
 불러오는 중...
 
@@ -179,21 +180,25 @@ z-index:10;
 
 
 
+
 <script>
 
 
-let map=document.getElementById("map");
+const map=document.getElementById("map");
 
-let info=document.getElementById("info");
+const info=document.getElementById("info");
 
-let list=document.getElementById("list");
-
-
+const list=document.getElementById("list");
 
 
-// 과거 20년 주요 지진
 
-let historic=[
+
+// ==========================
+// 최근 20년 주요 지진
+// ==========================
+
+
+let history=[
 
 
 {
@@ -202,7 +207,7 @@ year:"2011",
 mag:9.1,
 x:82,
 y:43,
-desc:"2011년 발생. 거대한 쓰나미를 발생시킨 초대형 지진"
+desc:"2011년 발생한 초대형 지진. 강력한 쓰나미 발생."
 },
 
 
@@ -212,7 +217,7 @@ year:"2010",
 mag:8.8,
 x:30,
 y:66,
-desc:"세계에서 가장 강력한 지진 중 하나"
+desc:"세계 역사상 가장 강력한 지진 중 하나."
 },
 
 
@@ -222,7 +227,7 @@ year:"2023",
 mag:7.8,
 x:60,
 y:40,
-desc:"대규모 피해를 발생시킨 강진"
+desc:"대규모 피해를 발생시킨 강진."
 },
 
 
@@ -232,7 +237,7 @@ year:"2016",
 mag:7.8,
 x:86,
 y:67,
-desc:"뉴질랜드 남섬 부근 발생"
+desc:"뉴질랜드 남섬 부근 발생."
 },
 
 
@@ -242,15 +247,16 @@ year:"2025",
 mag:7.7,
 x:72,
 y:52,
-desc:"강한 흔들림이 발생한 대형 지진"
+desc:"강한 흔들림이 발생한 대형 지진."
 }
-
 
 ];
 
 
 
-function addEarthquake(e){
+
+
+function createDot(data){
 
 
 let dot=document.createElement("div");
@@ -259,7 +265,7 @@ let dot=document.createElement("div");
 dot.className="quake";
 
 
-let size=e.mag*4;
+let size=data.mag*4;
 
 
 dot.style.width=size+"px";
@@ -267,9 +273,9 @@ dot.style.width=size+"px";
 dot.style.height=size+"px";
 
 
-dot.style.left=e.x+"%";
+dot.style.left=data.x+"%";
 
-dot.style.top=e.y+"%";
+dot.style.top=data.y+"%";
 
 
 
@@ -281,15 +287,19 @@ info.style.display="block";
 
 info.innerHTML=
 
-"<h3>"+e.name+"</h3>"+
+"<h3>"+data.name+"</h3>"+
 
-"발생년도 : "+e.year+
+"규모 : M"+data.mag+
+
 "<br>"+
 
-"규모 : M"+e.mag+
-"<br><br>"+
+(data.time?
+"발생 시간 : "+data.time+"<br>":
+"발생년도 : "+data.year+"<br>")+
 
-e.desc;
+"<br>"+
+
+data.desc;
 
 
 
@@ -300,21 +310,22 @@ e.desc;
 map.appendChild(dot);
 
 
-
 }
 
 
 
-historic.forEach(addEarthquake);
+history.forEach(createDot);
 
 
 
 
 
-// 실시간 지진 불러오기
+// ==========================
+// 실시간 지진
+// ==========================
 
 
-function realTime(){
+function loadRealEarthquake(){
 
 
 fetch(
@@ -322,87 +333,79 @@ fetch(
 )
 
 
-.then(r=>r.json())
+.then(res=>res.json())
 
 
 .then(data=>{
 
 
-list.innerHTML="<b>최근 실시간 지진</b><br>";
+list.innerHTML="<b>🌋 최근 실시간 지진</b><br><br>";
 
 
 
-data.features.slice(0,10).forEach(q=>{
+data.features.slice(0,15).forEach(q=>{
 
 
 let p=q.properties;
-
 
 let c=q.geometry.coordinates;
 
 
 
-let name=p.place;
-
-let mag=p.mag;
+let time=new Date(p.time);
 
 
 
-list.innerHTML+=
-
-"🌋 "+name+
-"<br>규모 M"+mag+
-"<br><br>";
+let quake={
 
 
-
-let dot=document.createElement("div");
-
-dot.className="quake";
+name:"🌋 "+p.place,
 
 
-let size=Math.max(10,mag*3);
+mag:p.mag,
 
 
-dot.style.width=size+"px";
-
-dot.style.height=size+"px";
+x:(c[0]+180)/360*100,
 
 
-
-// 경도, 위도를 화면 위치로 변환
-
-dot.style.left=((c[0]+180)/360*100)+"%";
+y:(90-c[1])/180*100,
 
 
-dot.style.top=((90-c[1])/180*100)+"%";
+time:time.toLocaleString("ko-KR"),
 
 
-
-dot.onclick=function(){
-
-
-info.style.display="block";
-
-
-info.innerHTML=
-
-"<h3>"+name+"</h3>"+
-"규모 : M"+mag+
-"<br>"+
-"실시간 USGS 데이터";
-
+desc:"USGS 실시간 관측 데이터"
 
 };
 
 
 
-map.appendChild(dot);
+createDot(quake);
+
+
+
+list.innerHTML+=
+
+"🌋 "+p.place+
+"<br>"+
+"규모 : M"+p.mag+
+"<br>"+
+"시간 : "+
+time.toLocaleString("ko-KR")+
+"<br><br>";
 
 
 
 });
 
+
+
+})
+
+.catch(()=>{
+
+list.innerHTML=
+"실시간 데이터를 불러오지 못했습니다.";
 
 });
 
@@ -411,12 +414,17 @@ map.appendChild(dot);
 
 
 
-realTime();
 
 
-// 10분마다 갱신
+loadRealEarthquake();
 
-setInterval(realTime,600000);
+
+// 10분마다 새로 업데이트
+
+setInterval(
+loadRealEarthquake,
+600000
+);
 
 
 
