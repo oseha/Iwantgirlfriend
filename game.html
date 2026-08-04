@@ -1,57 +1,55 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-
 <meta charset="UTF-8">
 <title>기사 성준의 미로 모험</title>
 
 <style>
 
 body{
-margin:0;
-background:#000;
-color:white;
-font-family:"Malgun Gothic";
-overflow:hidden;
+    margin:0;
+    background:#000;
+    overflow:hidden;
+    font-family:"Malgun Gothic";
+    color:white;
 }
-
 
 #info{
-position:absolute;
-top:15px;
-left:20px;
-font-size:25px;
-z-index:5;
+    position:absolute;
+    top:15px;
+    left:20px;
+    z-index:10;
+    font-size:22px;
 }
-
 
 canvas{
-display:block;
-margin:auto;
-background:#222;
+    display:block;
+    margin:auto;
 }
 
+#miniMap{
+    position:absolute;
+    right:20px;
+    top:20px;
+    border:4px solid gold;
+    background:black;
+}
 
 #message{
-
-position:absolute;
-top:45%;
-width:100%;
-text-align:center;
-font-size:45px;
-color:gold;
-display:none;
-
+    position:absolute;
+    top:45%;
+    width:100%;
+    text-align:center;
+    font-size:45px;
+    color:gold;
+    display:none;
 }
-
 
 </style>
 
 </head>
 
-
 <body>
-
 
 <div id="info">
 ⚔️ 기사 성준 |
@@ -59,72 +57,58 @@ display:none;
 🏰 Stage : <span id="stage">1</span>
 </div>
 
+<canvas id="game" width="900" height="600"></canvas>
+
+<canvas id="miniMap" width="220" height="220"></canvas>
 
 <div id="message"></div>
 
 
-<canvas id="game" width="1000" height="650"></canvas>
-
-
-
 <script>
 
-
 const canvas=document.getElementById("game");
-
 const ctx=canvas.getContext("2d");
 
+const mini=document.getElementById("miniMap");
+const mctx=mini.getContext("2d");
 
 
 let stage=1;
-
 let hp=100;
 
 
-
 let player={
-
 x:1.5,
 y:1.5,
 dir:0
-
 };
-
 
 
 let monster={
-
 x:7.5,
-y:6.5,
-active:false
-
+y:6.5
 };
-
 
 
 let item={
-
 x:4.5,
-y:4.5,
+y:5.5,
 active:true
-
 };
 
 
-
-// 쉬운 고정 미로
 
 let map=[
 
 [1,1,1,1,1,1,1,1,1,1],
 [1,0,0,0,0,1,0,0,2,1],
-[1,0,1,1,0,1,0,1,1,1],
-[1,0,0,1,0,0,0,0,0,1],
-[1,1,0,1,1,1,1,1,0,1],
+[1,0,1,0,0,1,0,1,1,1],
+[1,0,1,0,0,0,0,0,0,1],
+[1,0,1,1,1,1,1,1,0,1],
 [1,0,0,0,0,0,0,1,0,1],
-[1,0,1,1,1,1,0,1,0,1],
+[1,1,1,1,1,1,0,1,0,1],
 [1,0,0,0,0,1,0,0,0,1],
-[1,1,1,1,0,0,0,1,0,1],
+[1,0,0,0,0,0,0,1,0,1],
 [1,1,1,1,1,1,1,1,1,1]
 
 ];
@@ -137,50 +121,40 @@ let keys={};
 document.addEventListener("keydown",
 e=>keys[e.key]=true);
 
-
 document.addEventListener("keyup",
 e=>keys[e.key]=false);
 
 
 
-
 function move(){
-
 
 let speed=0.07;
 
-
 let nx=player.x;
-
 let ny=player.y;
-
 
 
 if(keys["ArrowUp"]){
 
 nx+=Math.cos(player.dir)*speed;
-
 ny+=Math.sin(player.dir)*speed;
 
 }
 
-
 if(keys["ArrowDown"]){
 
 nx-=Math.cos(player.dir)*speed;
-
 ny-=Math.sin(player.dir)*speed;
 
 }
 
 
 if(keys["ArrowLeft"])
-player.dir-=0.05;
+player.dir-=0.06;
 
 
 if(keys["ArrowRight"])
-player.dir+=0.05;
-
+player.dir+=0.06;
 
 
 
@@ -191,215 +165,224 @@ player.y=ny;
 
 }
 
-
 }
 
-
-
-
-let damageCool=0;
 
 
 function monsterMove(){
 
 
-if(stage<10)
-return;
-
-
-monster.active=true;
-
+if(stage<10)return;
 
 
 let dx=player.x-monster.x;
-
 let dy=player.y-monster.y;
 
-
 let d=Math.sqrt(dx*dx+dy*dy);
-
 
 
 if(d<5){
 
 monster.x+=dx/d*0.002;
-
 monster.y+=dy/d*0.002;
 
 }
 
 
-
 if(d<0.5){
 
-damageCool++;
-
-
-if(damageCool>80){
-
-hp-=5;
-
-damageCool=0;
+hp-=1;
 
 document.getElementById("hp").innerHTML=hp;
 
 
-}
-
-}
-
-
-
 if(hp<=0){
 
-end("💀 기사 성준이 쓰러졌습니다.");
+gameOver();
+
+}
 
 }
 
 
 }
-
-
 
 
 
 function itemCheck(){
 
-
 let d=Math.hypot(
-
 player.x-item.x,
-
 player.y-item.y
-
 );
 
 
-
-if(d<0.5 && item.active){
-
+if(d<0.5&&item.active){
 
 hp=Math.min(100,hp+30);
 
 item.active=false;
 
-
-alert("💖 체력 회복!");
-
 }
-
 
 }
 
 
 
-
-
-function goalCheck(){
-
+function goal(){
 
 let d=Math.hypot(
-
 player.x-8.5,
-
 player.y-1.5
-
 );
-
 
 
 if(d<0.5){
 
-
 stage++;
 
-
 document.getElementById("stage").innerHTML=stage;
-
-
-
-if(stage>20){
-
-end("👑 공주 구출 성공!");
-
-return;
-
-}
-
-
-
-alert("🎉 다음 스테이지!");
-
-
 
 player.x=1.5;
 player.y=1.5;
 
 
+if(stage>20){
 
-item.active=true;
+document.getElementById("message").style.display="block";
+document.getElementById("message").innerHTML=
+"👑 공주 구출 성공!";
 
+}
 
-monster.x=7.5;
-monster.y=6.5;
-
+}
 
 }
 
 
 
+function drawMini(){
+
+
+let size=22;
+
+
+mctx.clearRect(0,0,220,220);
+
+
+for(let y=0;y<10;y++){
+
+for(let x=0;x<10;x++){
+
+
+mctx.fillStyle=
+map[y][x]==1?
+"#333":"#ddd";
+
+
+mctx.fillRect(
+x*size,
+y*size,
+size,
+size
+);
+
+}
+
 }
 
 
+// 공주
+
+mctx.fillStyle="gold";
+
+mctx.fillRect(
+8*size,
+1*size,
+size,
+size
+);
+
+
+// 기사
+
+mctx.fillStyle="red";
+
+mctx.beginPath();
+
+mctx.arc(
+player.x*size,
+player.y*size,
+6,
+0,
+Math.PI*2
+);
+
+mctx.fill();
+
+
+// 몬스터
+
+if(stage>=10){
+
+mctx.fillStyle="purple";
+
+mctx.beginPath();
+
+mctx.arc(
+monster.x*size,
+monster.y*size,
+6,
+0,
+Math.PI*2
+);
+
+mctx.fill();
+
+}
+
+
+}
 
 
 
 function draw(){
 
 
-ctx.fillStyle="#444";
-
-ctx.fillRect(0,0,1000,650);
-
+ctx.fillStyle="#555";
+ctx.fillRect(0,0,900,600);
 
 
-let rays=500;
-
+let rays=700;
 
 
 for(let i=0;i<rays;i++){
 
 
 let angle=
-
 player.dir-0.7+i/rays*1.4;
-
 
 
 let distance=0;
 
 
-while(distance<15){
-
+while(distance<25){
 
 distance+=0.02;
 
 
 let rx=
-
 player.x+
 Math.cos(angle)*distance;
 
 
 let ry=
-
 player.y+
 Math.sin(angle)*distance;
 
 
 
 if(map[Math.floor(ry)][Math.floor(rx)]==1)
-
 break;
 
 
@@ -407,58 +390,42 @@ break;
 
 
 
-let h=
-
-550/(distance+0.1);
-
+let h=650/(distance+0.05);
 
 
 ctx.fillStyle=
-
-`rgb(${120-distance*5},
-${100-distance*4},
-${80-distance*3})`;
-
+`rgb(${120-distance*4},
+${100-distance*3},
+${80-distance*2})`;
 
 
 ctx.fillRect(
-
-i*2,
-
-325-h/2,
-
+i*1.3,
+300-h/2,
 2,
-
 h
-
 );
 
 
+}
+
 
 }
 
 
 
-}
+function gameOver(){
 
+document.getElementById("message").style.display="block";
 
-
-function end(text){
-
-let m=document.getElementById("message");
-
-m.style.display="block";
-
-m.innerHTML=text;
-
+document.getElementById("message").innerHTML=
+"💀 기사 성준 패배";
 
 }
-
 
 
 
 function loop(){
-
 
 move();
 
@@ -466,24 +433,21 @@ monsterMove();
 
 itemCheck();
 
-goalCheck();
-
+goal();
 
 draw();
 
+drawMini();
 
 requestAnimationFrame(loop);
 
-
 }
-
 
 
 loop();
 
 
 </script>
-
 
 </body>
 </html>
