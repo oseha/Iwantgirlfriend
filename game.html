@@ -2,46 +2,49 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>기사 성준 미로 모험</title>
+<title>기사 성준의 미로 모험</title>
 
 <style>
+
 body{
-margin:0;
-background:#000;
-overflow:hidden;
-color:white;
-font-family:Arial;
+    margin:0;
+    background:#000;
+    overflow:hidden;
+    font-family:"Malgun Gothic";
+    color:white;
 }
 
 #info{
-position:absolute;
-top:10px;
-left:15px;
-z-index:5;
-font-size:22px;
+    position:absolute;
+    top:15px;
+    left:20px;
+    z-index:10;
+    font-size:22px;
 }
 
 canvas{
-display:block;
-margin:auto;
+    display:block;
+    margin:auto;
 }
 
-#map{
-position:absolute;
-right:20px;
-top:20px;
-border:3px solid gold;
+#miniMap{
+    position:absolute;
+    right:20px;
+    top:20px;
+    border:4px solid gold;
+    background:black;
 }
 
-#msg{
-position:absolute;
-top:45%;
-width:100%;
-text-align:center;
-font-size:40px;
-color:gold;
-display:none;
+#message{
+    position:absolute;
+    top:45%;
+    width:100%;
+    text-align:center;
+    font-size:45px;
+    color:gold;
+    display:none;
 }
+
 </style>
 
 </head>
@@ -49,24 +52,25 @@ display:none;
 <body>
 
 <div id="info">
-⚔️ 성준 |
-❤️ <span id="hp">100</span> |
-🏰 <span id="stage">1</span> Stage
+⚔️ 기사 성준 |
+❤️ HP : <span id="hp">100</span> |
+🏰 Stage : <span id="stage">1</span>
 </div>
 
-<canvas id="game" width="800" height="600"></canvas>
-<canvas id="map" width="200" height="200"></canvas>
+<canvas id="game" width="900" height="600"></canvas>
 
-<div id="msg"></div>
+<canvas id="miniMap" width="220" height="220"></canvas>
+
+<div id="message"></div>
 
 
 <script>
 
-const c=document.getElementById("game");
-const ctx=c.getContext("2d");
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
 
-const m=document.getElementById("map");
-const mx=m.getContext("2d");
+const mini=document.getElementById("miniMap");
+const mctx=mini.getContext("2d");
 
 
 let stage=1;
@@ -80,26 +84,27 @@ dir:0
 };
 
 
-let princess={
-x:8.5,
-y:1.5
-};
-
-
 let monster={
 x:7.5,
 y:6.5
 };
 
 
+let item={
+x:4.5,
+y:5.5,
+active:true
+};
 
-let maze=[
+
+
+let map=[
 
 [1,1,1,1,1,1,1,1,1,1],
 [1,0,0,0,0,1,0,0,2,1],
-[1,0,1,1,0,1,0,1,1,1],
-[1,0,0,1,0,0,0,0,0,1],
-[1,1,0,1,1,1,1,1,0,1],
+[1,0,1,0,0,1,0,1,1,1],
+[1,0,1,0,0,0,0,0,0,1],
+[1,0,1,1,1,1,1,1,0,1],
 [1,0,0,0,0,0,0,1,0,1],
 [1,1,1,1,1,1,0,1,0,1],
 [1,0,0,0,0,1,0,0,0,1],
@@ -109,41 +114,51 @@ let maze=[
 ];
 
 
-let key={};
+
+let keys={};
 
 
-document.onkeydown=e=>key[e.key]=true;
-document.onkeyup=e=>key[e.key]=false;
+document.addEventListener("keydown",
+e=>keys[e.key]=true);
+
+document.addEventListener("keyup",
+e=>keys[e.key]=false);
 
 
 
 function move(){
 
-let s=0.07;
+let speed=0.07;
 
 let nx=player.x;
 let ny=player.y;
 
 
-if(key["ArrowUp"]){
-nx+=Math.cos(player.dir)*s;
-ny+=Math.sin(player.dir)*s;
+if(keys["ArrowUp"]){
+
+nx+=Math.cos(player.dir)*speed;
+ny+=Math.sin(player.dir)*speed;
+
 }
 
-if(key["ArrowDown"]){
-nx-=Math.cos(player.dir)*s;
-ny-=Math.sin(player.dir)*s;
+if(keys["ArrowDown"]){
+
+nx-=Math.cos(player.dir)*speed;
+ny-=Math.sin(player.dir)*speed;
+
 }
 
-if(key["ArrowLeft"])
+
+if(keys["ArrowLeft"])
 player.dir-=0.06;
 
-if(key["ArrowRight"])
+
+if(keys["ArrowRight"])
 player.dir+=0.06;
 
 
 
-if(maze[Math.floor(ny)][Math.floor(nx)]!=1){
+if(map[Math.floor(ny)][Math.floor(nx)]!=1){
 
 player.x=nx;
 player.y=ny;
@@ -154,11 +169,71 @@ player.y=ny;
 
 
 
-function checkPrincess(){
+function monsterMove(){
+
+
+if(stage<10)return;
+
+
+let dx=player.x-monster.x;
+let dy=player.y-monster.y;
+
+let d=Math.sqrt(dx*dx+dy*dy);
+
+
+if(d<5){
+
+monster.x+=dx/d*0.002;
+monster.y+=dy/d*0.002;
+
+}
+
+
+if(d<0.5){
+
+hp-=1;
+
+document.getElementById("hp").innerHTML=hp;
+
+
+if(hp<=0){
+
+gameOver();
+
+}
+
+}
+
+
+}
+
+
+
+function itemCheck(){
 
 let d=Math.hypot(
-player.x-princess.x,
-player.y-princess.y
+player.x-item.x,
+player.y-item.y
+);
+
+
+if(d<0.5&&item.active){
+
+hp=Math.min(100,hp+30);
+
+item.active=false;
+
+}
+
+}
+
+
+
+function goal(){
+
+let d=Math.hypot(
+player.x-8.5,
+player.y-1.5
 );
 
 
@@ -168,22 +243,15 @@ stage++;
 
 document.getElementById("stage").innerHTML=stage;
 
-
-alert("👸 공주 구출 성공!");
-
 player.x=1.5;
 player.y=1.5;
 
 
-princess.x=Math.floor(Math.random()*7)+2;
-princess.y=Math.floor(Math.random()*7)+1;
-
-
 if(stage>20){
 
-document.getElementById("msg").style.display="block";
-document.getElementById("msg").innerHTML=
-"👑 모든 공주 구출 성공!";
+document.getElementById("message").style.display="block";
+document.getElementById("message").innerHTML=
+"👑 공주 구출 성공!";
 
 }
 
@@ -193,62 +261,30 @@ document.getElementById("msg").innerHTML=
 
 
 
-function monsterMove(){
-
-if(stage<10)return;
+function drawMini(){
 
 
-let dx=player.x-monster.x;
-let dy=player.y-monster.y;
+let size=22;
 
 
-let d=Math.sqrt(dx*dx+dy*dy);
-
-
-if(d<4){
-
-monster.x+=dx/d*0.003;
-monster.y+=dy/d*0.003;
-
-}
-
-
-if(d<0.5){
-
-hp--;
-
-document.getElementById("hp").innerHTML=hp;
-
-
-}
-
-}
-
-
-
-
-function miniMap(){
-
-let s=20;
-
-
-mx.clearRect(0,0,200,200);
+mctx.clearRect(0,0,220,220);
 
 
 for(let y=0;y<10;y++){
 
 for(let x=0;x<10;x++){
 
-mx.fillStyle=
-maze[y][x]?
-"#222":"#ddd";
+
+mctx.fillStyle=
+map[y][x]==1?
+"#333":"#ddd";
 
 
-mx.fillRect(
-x*s,
-y*s,
-s,
-s
+mctx.fillRect(
+x*size,
+y*size,
+size,
+size
 );
 
 }
@@ -258,56 +294,132 @@ s
 
 // 공주
 
-mx.font="18px Arial";
+mctx.fillStyle="gold";
 
-mx.fillText(
-"👸",
-princess.x*s,
-princess.y*s
+mctx.fillRect(
+8*size,
+1*size,
+size,
+size
 );
 
 
 // 기사
 
-mx.fillText(
-"🔴",
-player.x*s,
-player.y*s
+mctx.fillStyle="red";
+
+mctx.beginPath();
+
+mctx.arc(
+player.x*size,
+player.y*size,
+6,
+0,
+Math.PI*2
 );
+
+mctx.fill();
 
 
 // 몬스터
 
 if(stage>=10){
 
-mx.fillText(
-"👹",
-monster.x*s,
-monster.y*s
+mctx.fillStyle="purple";
+
+mctx.beginPath();
+
+mctx.arc(
+monster.x*size,
+monster.y*size,
+6,
+0,
+Math.PI*2
 );
 
+mctx.fill();
+
 }
 
 
 }
-
 
 
 
 function draw(){
 
-ctx.fillStyle="#444";
-ctx.fillRect(0,0,800,600);
+
+ctx.fillStyle="#555";
+ctx.fillRect(0,0,900,600);
 
 
-ctx.fillStyle="white";
-ctx.font="40px Arial";
+let rays=700;
 
-ctx.fillText(
-"⚔️",
-380,
-300
+
+for(let i=0;i<rays;i++){
+
+
+let angle=
+player.dir-0.7+i/rays*1.4;
+
+
+let distance=0;
+
+
+while(distance<25){
+
+distance+=0.02;
+
+
+let rx=
+player.x+
+Math.cos(angle)*distance;
+
+
+let ry=
+player.y+
+Math.sin(angle)*distance;
+
+
+
+if(map[Math.floor(ry)][Math.floor(rx)]==1)
+break;
+
+
+}
+
+
+
+let h=650/(distance+0.05);
+
+
+ctx.fillStyle=
+`rgb(${120-distance*4},
+${100-distance*3},
+${80-distance*2})`;
+
+
+ctx.fillRect(
+i*1.3,
+300-h/2,
+2,
+h
 );
+
+
+}
+
+
+}
+
+
+
+function gameOver(){
+
+document.getElementById("message").style.display="block";
+
+document.getElementById("message").innerHTML=
+"💀 기사 성준 패배";
 
 }
 
@@ -317,13 +429,15 @@ function loop(){
 
 move();
 
-checkPrincess();
-
 monsterMove();
+
+itemCheck();
+
+goal();
 
 draw();
 
-miniMap();
+drawMini();
 
 requestAnimationFrame(loop);
 
@@ -331,6 +445,7 @@ requestAnimationFrame(loop);
 
 
 loop();
+
 
 </script>
 
