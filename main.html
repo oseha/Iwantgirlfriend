@@ -1,155 +1,420 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+
 <meta charset="UTF-8">
 <title>기사 성준의 미로</title>
 
 <style>
+
 body{
-    background:#1d1d1d;
-    color:white;
-    text-align:center;
-    font-family:Arial;
+
+margin:0;
+
+background:
+linear-gradient(#050505,#222);
+
+color:white;
+
+font-family:"Malgun Gothic";
+
+text-align:center;
+
 }
+
 
 h1{
-    margin-top:20px;
+
+font-size:45px;
+
+color:gold;
+
+text-shadow:0 0 20px orange;
+
 }
+
+
+#stage{
+
+font-size:30px;
+
+margin:20px;
+
+}
+
+
 
 #maze{
-    display:grid;
-    grid-template-columns:repeat(10,50px);
-    grid-template-rows:repeat(10,50px);
-    width:500px;
-    margin:30px auto;
-    border:5px solid white;
+
+margin:auto;
+
+display:grid;
+
+grid-template-columns:repeat(12,60px);
+
+grid-template-rows:repeat(12,60px);
+
+width:720px;
+
+border:8px solid gold;
+
+box-shadow:0 0 30px black;
+
 }
+
+
 
 .cell{
-    width:50px;
-    height:50px;
+
+width:60px;
+
+height:60px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:35px;
+
 }
+
+
 
 .wall{
-    background:#444;
+
+background:
+linear-gradient(
+45deg,
+#333,
+#111
+);
+
+border:2px solid #555;
+
 }
+
+
 
 .path{
-    background:#dddddd;
+
+background:#d6c29c;
+
 }
+
+
 
 .player{
-    background:#2ecc71;
+
+background:#2ecc71;
+
 }
 
+
+
 .goal{
-    background:gold;
+
+background:#ffd700;
+
 }
+
+
+
+button{
+
+padding:15px 40px;
+
+font-size:25px;
+
+border-radius:30px;
+
+background:gold;
+
+border:none;
+
+cursor:pointer;
+
+}
+
+
+
 </style>
 
 </head>
+
+
 <body>
 
-<h1>⚔️ 기사 성준의 미로</h1>
 
-<p>방향키(← ↑ → ↓)를 눌러 공주에게 가세요.</p>
+<audio autoplay loop>
+
+<source src="music.mp3">
+
+</audio>
+
+
+
+<h1>
+⚔️ 기사 성준의 미로 대모험
+</h1>
+
+
+<div id="stage">
+스테이지 1
+</div>
+
 
 <div id="maze"></div>
 
+
+<br>
+
+<button onclick="restart()">
+🔄 다시 시작
+</button>
+
+
+
 <script>
 
-const maze=[
-[0,0,0,1,0,0,0,0,0,0],
-[1,1,0,1,0,1,1,1,1,0],
-[0,0,0,1,0,0,0,0,1,0],
-[0,1,1,1,1,1,1,0,1,0],
-[0,0,0,0,0,0,1,0,0,0],
-[1,1,1,1,1,0,1,1,1,0],
-[0,0,0,0,1,0,0,0,1,0],
-[0,1,1,0,1,1,1,0,1,0],
-[0,0,1,0,0,0,0,0,1,2],
-[0,0,0,0,1,1,1,0,0,0]
+
+let stage=1;
+
+
+let maps=[
+
+
+// 스테이지1
+
+[
+[0,0,1,0,0,0,1,0,0,0,0,0],
+[1,0,1,0,1,0,1,0,1,1,1,0],
+[1,0,0,0,1,0,0,0,0,0,1,0],
+[1,1,1,0,1,1,1,1,1,0,1,0],
+[0,0,0,0,0,0,0,0,1,0,0,0],
+[0,1,1,1,1,1,1,0,1,1,1,0],
+[0,0,0,0,0,0,1,0,0,0,1,0],
+[1,1,1,1,1,0,1,1,1,0,1,0],
+[0,0,0,0,1,0,0,0,1,0,0,0],
+[0,1,1,0,1,1,1,0,1,1,1,0],
+[0,0,1,0,0,0,0,0,0,0,0,0],
+[1,0,0,0,1,1,1,1,1,1,0,2]
+],
+
+
+// 스테이지2
+
+[
+[0,1,0,0,0,1,0,0,1,0,0,0],
+[0,1,0,1,0,1,0,0,1,1,1,0],
+[0,0,0,1,0,0,0,1,0,0,1,0],
+[1,1,0,1,1,1,0,1,0,1,1,0],
+[0,0,0,0,0,1,0,0,0,1,0,0],
+[0,1,1,1,0,1,1,1,0,1,1,0],
+[0,0,0,1,0,0,0,1,0,0,1,0],
+[1,1,0,1,1,1,0,1,1,0,1,0],
+[0,0,0,0,0,0,0,0,1,0,0,0],
+[0,1,1,1,1,1,1,0,1,1,1,0],
+[0,0,0,0,0,0,1,0,0,0,0,0],
+[1,1,1,1,1,0,0,0,1,1,1,2]
+],
+
+
+// 스테이지3
+
+[
+[0,0,0,1,1,0,0,0,1,0,0,0],
+[1,1,0,0,1,0,1,0,1,1,1,0],
+[0,0,0,1,1,0,1,0,0,0,1,0],
+[0,1,0,0,0,0,1,1,1,0,1,0],
+[0,1,1,1,1,0,0,0,1,0,0,0],
+[0,0,0,0,1,1,1,0,1,1,1,0],
+[1,1,1,0,0,0,1,0,0,0,1,0],
+[0,0,1,1,1,0,1,1,1,0,1,0],
+[0,1,0,0,0,0,0,0,1,0,0,0],
+[0,1,1,1,1,1,1,0,1,1,1,0],
+[0,0,0,0,0,0,0,0,0,0,0,0],
+[1,1,1,1,1,1,1,1,1,1,0,2]
+
+]
+
 ];
+
+
 
 let player={
 x:0,
 y:0
 };
 
-const mazeDiv=document.getElementById("maze");
+
 
 function draw(){
 
-mazeDiv.innerHTML="";
+let maze=document.getElementById("maze");
 
-for(let y=0;y<10;y++){
+maze.innerHTML="";
 
-for(let x=0;x<10;x++){
 
-const cell=document.createElement("div");
-cell.classList.add("cell");
+let map=maps[stage-1];
+
+
+for(let y=0;y<12;y++){
+
+for(let x=0;x<12;x++){
+
+
+let div=document.createElement("div");
+
+div.className="cell";
+
 
 if(player.x==x && player.y==y){
 
-cell.classList.add("player");
-cell.innerHTML="⚔️";
+div.classList.add("player");
 
-}else if(maze[y][x]==1){
-
-cell.classList.add("wall");
-
-}else if(maze[y][x]==2){
-
-cell.classList.add("goal");
-cell.innerHTML="👸";
-
-}else{
-
-cell.classList.add("path");
+div.innerHTML="⚔️";
 
 }
 
-mazeDiv.appendChild(cell);
+
+else if(map[y][x]==1){
+
+div.classList.add("wall");
+
+}
+
+
+else if(map[y][x]==2){
+
+div.classList.add("goal");
+
+div.innerHTML="👸";
+
+}
+
+
+else{
+
+div.classList.add("path");
+
+}
+
+
+
+maze.appendChild(div);
+
 
 }
 
 }
 
+
 }
 
-draw();
 
-document.addEventListener("keydown",function(e){
+
+document.addEventListener("keydown",e=>{
+
 
 let nx=player.x;
+
 let ny=player.y;
 
-if(e.key=="ArrowUp") ny--;
-if(e.key=="ArrowDown") ny++;
-if(e.key=="ArrowLeft") nx--;
+
 if(e.key=="ArrowRight") nx++;
 
-if(nx<0||ny<0||nx>9||ny>9) return;
+if(e.key=="ArrowLeft") nx--;
 
-if(maze[ny][nx]==1) return;
+if(e.key=="ArrowUp") ny--;
+
+if(e.key=="ArrowDown") ny++;
+
+
+
+let map=maps[stage-1];
+
+
+
+if(nx<0||ny<0||nx>=12||ny>=12)
+return;
+
+
+
+if(map[ny][nx]==1)
+return;
+
+
 
 player.x=nx;
+
 player.y=ny;
+
 
 draw();
 
-if(maze[ny][nx]==2){
 
-setTimeout(()=>{
-alert("🎉 기사 성준이 공주를 구출했습니다!");
-location.href="index.html";
-},100);
+
+if(map[ny][nx]==2){
+
+
+if(stage<3){
+
+stage++;
+
+alert("🎉 스테이지 클리어!");
+
+document.getElementById("stage").innerHTML=
+"스테이지 "+stage;
+
+
+player.x=0;
+
+player.y=0;
+
+draw();
+
 
 }
+
+else{
+
+
+alert("👑 기사 성준이 공주를 구출했습니다!");
+
+location.href="index.html";
+
+
+}
+
+
+}
+
 
 });
 
+
+
+function restart(){
+
+stage=1;
+
+player.x=0;
+
+player.y=0;
+
+draw();
+
+}
+
+
+
+draw();
+
+
 </script>
+
 
 </body>
 </html>
