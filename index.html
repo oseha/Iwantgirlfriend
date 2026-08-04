@@ -1,21 +1,76 @@
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>기사의 공주 구출</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+<section class="game">
+    <h2>게임 시작</h2>
 
-<h1>⚔️ 기사의 공주 구출</h1>
+    <button onclick="startGame()">게임 시작</button>
 
-<p>방향키(↑↓←→)를 이용해 공주를 찾아가세요.</p>
+    <h3 id="result">버튼을 눌러 게임을 시작하세요.</h3>
 
-<div id="game"></div>
+    <div class="score">
+        <p>점수 : <span id="score">0</span></p>
+    </div>
+</section>
 
-<h2 id="message"></h2>
+<footer>
+    © 2026 Baseball Game
+</footer>
 
 <script src="script.js"></script>
 
 </body>
 </html>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0b6623;
+    color:white;
+    text-align:center;
+}
+
+header{
+    background:#111;
+    padding:30px;
+}
+
+.game{
+    margin-top:50px;
+}
+
+button{
+    padding:15px 30px;
+    font-size:20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:orange;
+}
+
+button:hover{
+    background:red;
+    color:white;
+}
+
+.score{
+    margin-top:30px;
+    font-size:30px;
+}
+
+footer{
+    margin-top:100px;
+    padding:20px;
+    background:#111;
+}
+let score = 0;
+
+function startGame(){
+
+    let hit = Math.floor(Math.random()*2);
+
+    if(hit==1){
+        score++;
+        document.getElementById("result").innerHTML="🎉 안타!";
+    }else{
+        document.getElementById("result").innerHTML="❌ 아웃!";
+    }
+
+    document.getElementById("score").innerHTML=score;
+}
