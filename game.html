@@ -48,13 +48,18 @@ canvas{
 
 </head>
 
+
 <body>
 
+
 <div id="info">
+
 ⚔️ 기사 성준 |
 ❤️ HP : <span id="hp">100</span> |
 🏰 Stage : <span id="stage">1</span>
+
 </div>
+
 
 <canvas id="game" width="900" height="600"></canvas>
 
@@ -63,50 +68,43 @@ canvas{
 <div id="message"></div>
 
 
+
 <script>
+
 
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
+
 
 const mini=document.getElementById("miniMap");
 const mctx=mini.getContext("2d");
 
 
+
 let stage=1;
+
 let hp=100;
 
 
+
 let player={
+
 x:1.5,
 y:1.5,
 dir:0
+
 };
 
 
-let princess={
-x:8.5,
-y:1.5
-};
 
+// 스테이지 데이터
 
-let monster={
-x:7.5,
-y:6.5
-};
+let stages=[
 
+{
 
-let item={
-x:4.5,
-y:5.5,
-active:true
-};
+map:[
 
-
-// 스테이지별 맵
-
-let maps=[
-
-[
 [1,1,1,1,1,1,1,1,1,1],
 [1,0,0,0,0,1,0,0,2,1],
 [1,0,1,1,0,1,0,1,1,1],
@@ -117,38 +115,74 @@ let maps=[
 [1,0,0,0,0,1,0,0,0,1],
 [1,0,0,0,0,0,0,1,0,1],
 [1,1,1,1,1,1,1,1,1,1]
+
 ],
 
-[
+princess:{
+x:8.5,
+y:1.5
+},
+
+monster:{
+x:7.5,
+y:6.5
+},
+
+item:{
+x:4.5,
+y:5.5
+}
+
+},
+
+
+{
+
+map:[
+
 [1,1,1,1,1,1,1,1,1,1],
-[1,0,0,1,0,0,0,0,2,1],
-[1,0,1,1,0,1,1,0,1,1],
-[1,0,0,0,0,1,0,0,0,1],
-[1,1,1,1,0,1,0,1,1,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,1,1,1,1,1,1,0,1],
+[1,0,1,0,0,0,0,1,0,1],
+[1,0,1,0,1,1,0,1,0,1],
+[1,0,0,0,0,1,0,0,2,1],
+[1,1,1,1,0,1,1,1,1,1],
 [1,0,0,0,0,0,0,1,0,1],
+[1,0,1,1,1,1,0,1,0,1],
 [1,0,0,0,0,0,0,0,0,1],
+[1,0,0,0,0,1,0,1,0,1],
 [1,1,1,1,1,1,1,1,1,1]
+
 ],
 
-[
-[1,1,1,1,1,1,1,1,1,1],
-[1,0,0,0,1,0,0,0,2,1],
-[1,1,1,0,1,0,1,1,1,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,1,1,1,1,1,1,0,1],
-[1,0,0,0,0,0,0,1,0,1],
-[1,1,1,1,1,1,0,1,0,1],
-[1,0,0,0,0,0,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1]
-]
+princess:{
+x:8.5,
+y:3.5
+},
+
+monster:{
+x:6.5,
+y:7.5
+},
+
+item:{
+x:2.5,
+y:5.5
+}
+
+}
 
 ];
 
 
-let map=maps[0];
+
+let map=stages[0].map;
+
+
+let princess=stages[0].princess;
+
+let monster=stages[0].monster;
+
+let item=stages[0].item;
+
 
 
 let keys={};
@@ -160,6 +194,7 @@ e=>keys[e.key]=true);
 
 document.addEventListener("keyup",
 e=>keys[e.key]=false);
+
 function move(){
 
 let speed=0.07;
@@ -199,8 +234,10 @@ player.dir+=0.06;
 
 
 
-if(map[Math.floor(ny)] &&
-map[Math.floor(ny)][Math.floor(nx)]!=1){
+if(
+map[Math.floor(ny)] &&
+map[Math.floor(ny)][Math.floor(nx)]!=1
+){
 
 player.x=nx;
 player.y=ny;
@@ -211,17 +248,23 @@ player.y=ny;
 
 
 
-// 👸 공주 구출 체크
+
+
+// 👸 공주 구출
 
 function checkPrincess(){
 
-let distance=Math.hypot(
+let d=Math.hypot(
+
 player.x-princess.x,
+
 player.y-princess.y
+
 );
 
 
-if(distance<0.5){
+
+if(d<0.5){
 
 
 stage++;
@@ -230,7 +273,32 @@ stage++;
 document.getElementById("stage").innerHTML=stage;
 
 
-alert("👸 공주 구출 성공!");
+
+if(stage>stages.length){
+
+document.getElementById("message").style.display="block";
+
+document.getElementById("message").innerHTML=
+"👑 모든 공주 구출 성공!";
+
+return;
+
+}
+
+
+
+// 다음 스테이지 적용
+
+map=stages[stage-1].map;
+
+
+princess=stages[stage-1].princess;
+
+
+monster=stages[stage-1].monster;
+
+
+item=stages[stage-1].item;
 
 
 
@@ -239,33 +307,20 @@ player.y=1.5;
 
 
 
-if(stage<=maps.length){
+alert(
+"👸 공주 구출!\n다음 스테이지 시작!"
+);
 
-map=maps[stage-1];
-
-}
-
-
-
-princess.x=8.5;
-princess.y=1.5;
-
-
-
-// 다음 스테이지 시작 시 아이템 재생성
-
-item.active=true;
 
 
 }
-
 
 }
 
 
 
 
-// 👹 몬스터 이동
+// 👹 몬스터
 
 function monsterMove(){
 
@@ -278,26 +333,28 @@ let dx=player.x-monster.x;
 let dy=player.y-monster.y;
 
 
-let distance=Math.sqrt(dx*dx+dy*dy);
+let d=Math.sqrt(
+dx*dx+dy*dy
+);
 
 
 
-if(distance<5){
+if(d<5){
 
 
-monster.x+=dx/distance*0.002;
+monster.x+=dx/d*0.002;
 
-monster.y+=dy/distance*0.002;
+monster.y+=dy/d*0.002;
 
 
 }
 
 
 
-if(distance<0.5){
+if(d<0.5){
 
 
-hp-=0.2;
+hp-=0.3;
 
 
 document.getElementById("hp").innerHTML=
@@ -315,21 +372,26 @@ gameOver();
 }
 
 
+
 }
 
 
 
 
-// 💖 체력 아이템
+
+
+
+// 💖 아이템
 
 function itemCheck(){
 
 
-if(!item.active)return;
+if(!item.active)
+return;
 
 
 
-let distance=Math.hypot(
+let d=Math.hypot(
 
 player.x-item.x,
 
@@ -339,7 +401,7 @@ player.y-item.y
 
 
 
-if(distance<0.5){
+if(d<0.5){
 
 
 hp=Math.min(
@@ -348,8 +410,10 @@ hp+30
 );
 
 
+
 document.getElementById("hp").innerHTML=
 Math.floor(hp);
+
 
 
 item.active=false;
@@ -357,8 +421,8 @@ item.active=false;
 
 }
 
-
 }
+
 
 
 
@@ -387,17 +451,10 @@ for(let y=0;y<10;y++){
 for(let x=0;x<10;x++){
 
 
-
-if(map[y][x]==1){
-
-mctx.fillStyle="#222";
-
-}else{
-
-mctx.fillStyle="#ddd";
-
-}
-
+mctx.fillStyle=
+map[y][x]==1?
+"#222":
+"#ddd";
 
 
 mctx.fillRect(
@@ -413,19 +470,15 @@ size
 );
 
 
-
 }
 
-
 }
-
 
 
 
 // 👸 공주
 
 mctx.font="20px Arial";
-
 
 mctx.fillText(
 
@@ -439,8 +492,7 @@ princess.y*size
 
 
 
-
-// ⚔️ 기사 성준
+// ⚔️ 기사
 
 mctx.fillText(
 
@@ -451,7 +503,6 @@ player.x*size,
 player.y*size
 
 );
-
 
 
 
@@ -472,7 +523,6 @@ item.y*size
 
 
 }
-
 
 
 
@@ -516,15 +566,12 @@ ctx.fillRect(
 let rays=700;
 
 
-
 for(let i=0;i<rays;i++){
-
 
 
 let angle=
 player.dir-0.7+
 (i/rays)*1.4;
-
 
 
 let distance=0;
@@ -594,21 +641,20 @@ height
 );
 
 
-
 }
 
 
 
-
-// 화면 중앙 기사 표시
+// 기사 표시
 
 ctx.font="45px Arial";
 
 ctx.fillText(
 "⚔️",
 430,
-340
+350
 );
+
 
 
 }
@@ -624,12 +670,13 @@ document.getElementById("message").style.display="block";
 
 
 document.getElementById("message").innerHTML=
-
 "💀 기사 성준 패배";
 
 
 
 }
+
+
 
 
 
@@ -640,8 +687,8 @@ document.getElementById("message").style.display="block";
 
 
 document.getElementById("message").innerHTML=
+"👑 성준이 모든 공주를 구출했다!";
 
-"👑 모든 공주 구출 성공!";
 
 
 }
@@ -649,10 +696,12 @@ document.getElementById("message").innerHTML=
 
 
 
+
+
 function loop(){
 
 
-if(stage>20){
+if(stage>stages.length){
 
 victory();
 
@@ -687,7 +736,9 @@ requestAnimationFrame(loop);
 
 
 
+
 loop();
+
 
 
 </script>
