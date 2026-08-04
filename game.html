@@ -1,55 +1,46 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+
 <meta charset="UTF-8">
-<title>기사 성준 - 미로 탈출</title>
+<title>기사 성준의 미로 모험</title>
 
 <style>
 
 body{
-    margin:0;
-    background:#000;
-    color:white;
-    font-family:"Malgun Gothic";
-    overflow:hidden;
+margin:0;
+background:#000;
+color:white;
+font-family:"Malgun Gothic";
+overflow:hidden;
 }
 
 
-#top{
-
-    position:absolute;
-    top:20px;
-    left:20px;
-    z-index:10;
-
-    font-size:25px;
-
+#info{
+position:absolute;
+top:15px;
+left:20px;
+font-size:25px;
+z-index:5;
 }
 
 
 canvas{
-
-    display:block;
-    margin:auto;
-    background:#111;
-
+display:block;
+margin:auto;
+background:#222;
 }
 
 
 #message{
 
-    position:absolute;
-
-    top:50%;
-    width:100%;
-
-    text-align:center;
-
-    font-size:50px;
-
-    color:gold;
-
-    display:none;
+position:absolute;
+top:45%;
+width:100%;
+text-align:center;
+font-size:45px;
+color:gold;
+display:none;
 
 }
 
@@ -62,59 +53,39 @@ canvas{
 <body>
 
 
-<div id="top">
-
+<div id="info">
 ⚔️ 기사 성준 |
-❤️ HP : <span id="hp">100</span>
-
+❤️ HP : <span id="hp">100</span> |
+🏰 Stage : <span id="stage">1</span>
 </div>
 
 
 <div id="message"></div>
 
 
-<canvas id="game" width="900" height="600"></canvas>
+<canvas id="game" width="1000" height="650"></canvas>
 
 
 
 <script>
 
 
-const canvas=
-document.getElementById("game");
+const canvas=document.getElementById("game");
 
-const ctx=
-canvas.getContext("2d");
+const ctx=canvas.getContext("2d");
 
 
+
+let stage=1;
 
 let hp=100;
-
-
-
-let map=[
-
-[1,1,1,1,1,1,1,1,1,1],
-[1,0,0,0,1,0,0,0,0,1],
-[1,0,1,0,1,0,1,1,0,1],
-[1,0,1,0,0,0,0,1,0,1],
-[1,0,1,1,1,1,0,1,0,1],
-[1,0,0,0,0,1,0,1,0,1],
-[1,1,1,1,0,1,0,1,0,1],
-[1,0,0,1,0,0,0,1,0,1],
-[1,0,0,0,0,1,0,0,2,1],
-[1,1,1,1,1,1,1,1,1,1]
-
-];
 
 
 
 let player={
 
 x:1.5,
-
 y:1.5,
-
 dir:0
 
 };
@@ -123,9 +94,9 @@ dir:0
 
 let monster={
 
-x:6.5,
-
-y:3.5
+x:7.5,
+y:6.5,
+active:false
 
 };
 
@@ -133,30 +104,42 @@ y:3.5
 
 let item={
 
-x:3.5,
-
-y:5.5,
-
-used:false
+x:4.5,
+y:4.5,
+active:true
 
 };
+
+
+
+// 쉬운 고정 미로
+
+let map=[
+
+[1,1,1,1,1,1,1,1,1,1],
+[1,0,0,0,0,1,0,0,2,1],
+[1,0,1,1,0,1,0,1,1,1],
+[1,0,0,1,0,0,0,0,0,1],
+[1,1,0,1,1,1,1,1,0,1],
+[1,0,0,0,0,0,0,1,0,1],
+[1,0,1,1,1,1,0,1,0,1],
+[1,0,0,0,0,1,0,0,0,1],
+[1,1,1,1,0,0,0,1,0,1],
+[1,1,1,1,1,1,1,1,1,1]
+
+];
 
 
 
 let keys={};
 
 
-
-document.addEventListener(
-"keydown",
-e=>keys[e.key]=true
-);
+document.addEventListener("keydown",
+e=>keys[e.key]=true);
 
 
-document.addEventListener(
-"keyup",
-e=>keys[e.key]=false
-);
+document.addEventListener("keyup",
+e=>keys[e.key]=false);
 
 
 
@@ -164,7 +147,7 @@ e=>keys[e.key]=false
 function move(){
 
 
-let speed=0.04;
+let speed=0.07;
 
 
 let nx=player.x;
@@ -201,10 +184,7 @@ player.dir+=0.05;
 
 
 
-if(map[Math.floor(ny)][Math.floor(nx)]==0 ||
-map[Math.floor(ny)][Math.floor(nx)]==2)
-
-{
+if(map[Math.floor(ny)][Math.floor(nx)]!=1){
 
 player.x=nx;
 player.y=ny;
@@ -216,7 +196,19 @@ player.y=ny;
 
 
 
+
+let damageCool=0;
+
+
 function monsterMove(){
+
+
+if(stage<10)
+return;
+
+
+monster.active=true;
+
 
 
 let dx=player.x-monster.x;
@@ -227,32 +219,46 @@ let dy=player.y-monster.y;
 let d=Math.sqrt(dx*dx+dy*dy);
 
 
-if(d<3){
 
-monster.x+=dx/d*0.01;
+if(d<5){
 
-monster.y+=dy/d*0.01;
+monster.x+=dx/d*0.002;
+
+monster.y+=dy/d*0.002;
 
 }
+
 
 
 if(d<0.5){
 
-hp-=1;
+damageCool++;
+
+
+if(damageCool>80){
+
+hp-=5;
+
+damageCool=0;
 
 document.getElementById("hp").innerHTML=hp;
 
 
+}
+
+}
+
+
+
 if(hp<=0){
 
-end("💀 기사 성준 패배");
+end("💀 기사 성준이 쓰러졌습니다.");
 
 }
 
-}
-
 
 }
+
 
 
 
@@ -270,11 +276,13 @@ player.y-item.y
 
 
 
-if(d<0.5&&!item.used){
+if(d<0.5 && item.active){
 
-item.used=true;
 
-hp=Math.min(100,hp+40);
+hp=Math.min(100,hp+30);
+
+item.active=false;
+
 
 alert("💖 체력 회복!");
 
@@ -294,7 +302,7 @@ let d=Math.hypot(
 
 player.x-8.5,
 
-player.y-8.5
+player.y-1.5
 
 );
 
@@ -302,25 +310,46 @@ player.y-8.5
 
 if(d<0.5){
 
-end("👸 공주 구출 성공!");
+
+stage++;
+
+
+document.getElementById("stage").innerHTML=stage;
+
+
+
+if(stage>20){
+
+end("👑 공주 구출 성공!");
+
+return;
 
 }
 
 
+
+alert("🎉 다음 스테이지!");
+
+
+
+player.x=1.5;
+player.y=1.5;
+
+
+
+item.active=true;
+
+
+monster.x=7.5;
+monster.y=6.5;
+
+
 }
 
 
 
-
-
-function end(t){
-
-document.getElementById("message").style.display="block";
-
-document.getElementById("message").innerHTML=t;
-
-
 }
+
 
 
 
@@ -328,18 +357,13 @@ document.getElementById("message").innerHTML=t;
 function draw(){
 
 
-ctx.fillStyle="#222";
+ctx.fillStyle="#444";
 
-ctx.fillRect(
-0,
-0,
-900,
-600
-);
+ctx.fillRect(0,0,1000,650);
 
 
 
-let rays=300;
+let rays=500;
 
 
 
@@ -347,34 +371,34 @@ for(let i=0;i<rays;i++){
 
 
 let angle=
-player.dir-0.5+i/rays;
+
+player.dir-0.7+i/rays*1.4;
+
 
 
 let distance=0;
 
 
-while(distance<20){
+while(distance<15){
 
 
 distance+=0.02;
 
 
 let rx=
+
 player.x+
 Math.cos(angle)*distance;
 
 
 let ry=
+
 player.y+
 Math.sin(angle)*distance;
 
 
 
-if(
-map[Math.floor(ry)]
-&&
-map[Math.floor(ry)][Math.floor(rx)]==1
-)
+if(map[Math.floor(ry)][Math.floor(rx)]==1)
 
 break;
 
@@ -383,26 +407,29 @@ break;
 
 
 
-let height=
-500/(distance+0.1);
+let h=
+
+550/(distance+0.1);
 
 
 
 ctx.fillStyle=
-`rgb(${100-distance*5},
-${80-distance*4},
-${60-distance*3})`;
+
+`rgb(${120-distance*5},
+${100-distance*4},
+${80-distance*3})`;
+
 
 
 ctx.fillRect(
 
-i*3,
+i*2,
 
-300-height/2,
+325-h/2,
 
-3,
+2,
 
-height
+h
 
 );
 
@@ -411,7 +438,22 @@ height
 }
 
 
+
 }
+
+
+
+function end(text){
+
+let m=document.getElementById("message");
+
+m.style.display="block";
+
+m.innerHTML=text;
+
+
+}
+
 
 
 
@@ -436,11 +478,12 @@ requestAnimationFrame(loop);
 }
 
 
+
 loop();
 
 
-
 </script>
+
 
 </body>
 </html>
