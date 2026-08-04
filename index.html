@@ -1,110 +1,19 @@
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>기사의 미로 대모험</title>
-
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:'Arial',sans-serif;
-    background:linear-gradient(#0d1b2a,#1b263b,#415a77);
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-}
-
-.container{
-    text-align:center;
-    color:white;
-}
-
-h1{
-    font-size:70px;
-    text-shadow:0 0 20px gold;
-    margin-bottom:20px;
-}
-
-p{
-    font-size:24px;
-    margin-bottom:40px;
-}
-
-button{
-    padding:18px 50px;
-    font-size:28px;
-    border:none;
-    border-radius:50px;
-    background:gold;
-    color:#222;
-    cursor:pointer;
-    transition:0.3s;
-    font-weight:bold;
-}
-
-button:hover{
-    transform:scale(1.1);
-    background:orange;
-}
-
-.knight{
-    font-size:90px;
-    animation:walk 2s infinite alternate;
-}
-
-.castle{
-    position:absolute;
-    right:70px;
-    bottom:50px;
-    font-size:120px;
-}
-
-.princess{
-    position:absolute;
-    right:95px;
-    bottom:150px;
-    font-size:55px;
-}
-
-@keyframes walk{
-    from{transform:translateX(-20px);}
-    to{transform:translateX(20px);}
-}
-</style>
-</head>
-
-<body>
-
 <div class="container">
 
 <div class="knight">🛡️⚔️</div>
 
-<h1>기사의 미로 대모험</h1>
+<h1>⚔️ 성준의 미로 대모험 ⚔️</h1>
+
+<h2>용감한 기사 성준</h2>
 
 <p>
-용감한 기사가 위험한 미로를 통과하여<br>
-성에 갇힌 공주를 구출하세요!
+용감한 기사 <strong>성준</strong>은<br>
+위험한 미로를 통과하여 성에 갇힌 공주를 구출해야 합니다.<br><br>
+
+수많은 함정과 몬스터를 피해<br>
+무사히 공주를 구출하세요!
 </p>
 
 <button onclick="startGame()">게임 시작</button>
 
 </div>
-
-<div class="castle">🏰</div>
-<div class="princess">👸</div>
-
-<script>
-function startGame(){
-    // 게임 화면으로 이동
-    location.href="game.html";
-}
-</script>
-
-</body>
-</html>
