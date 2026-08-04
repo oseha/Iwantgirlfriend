@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-
 <meta charset="UTF-8">
-<title>세계 지진 모델링</title>
+<title>실시간 세계 지진 지도</title>
 
 <style>
 
@@ -28,9 +27,7 @@ body{
     background-position:center;
 
     background-repeat:no-repeat;
-
 }
-
 
 
 /* 제목 */
@@ -51,9 +48,11 @@ body{
 
     border-radius:15px;
 
-    font-size:35px;
+    font-size:32px;
 
     font-weight:bold;
+
+    z-index:10;
 
 }
 
@@ -82,19 +81,24 @@ body{
 
 @keyframes pulse{
 
+    0%{
+        transform:scale(1);
+        opacity:1;
+    }
+
     50%{
-
-        transform:scale(1.8);
-
+        transform:scale(2);
         opacity:0.5;
+    }
 
+    100%{
+        transform:scale(1);
+        opacity:1;
     }
 
 }
 
 
-
-/* 설명창 */
 
 #info{
 
@@ -104,7 +108,7 @@ body{
 
     bottom:20px;
 
-    width:320px;
+    width:330px;
 
     background:white;
 
@@ -118,11 +122,11 @@ body{
 
     font-size:18px;
 
+    z-index:20;
+
 }
 
 
-
-/* 목록 */
 
 #list{
 
@@ -132,7 +136,7 @@ body{
 
     bottom:20px;
 
-    width:300px;
+    width:320px;
 
     max-height:300px;
 
@@ -144,16 +148,15 @@ body{
 
     border-radius:15px;
 
-    font-size:16px;
+    font-size:15px;
+
+    z-index:20;
 
 }
-
-
 
 </style>
 
 </head>
-
 
 <body>
 
@@ -161,275 +164,14 @@ body{
 <div id="map">
 
 <div id="title">
-🌎 세계 실시간 지진 모델링
+🌎 실시간 세계 지진 지도
 </div>
 
-
 </div>
-
 
 
 <div id="info"></div>
 
-
 <div id="list">
-
-불러오는 중...
-
+데이터 불러오는 중...
 </div>
-
-
-
-
-<script>
-
-
-const map=document.getElementById("map");
-
-const info=document.getElementById("info");
-
-const list=document.getElementById("list");
-
-
-
-
-// ==========================
-// 최근 20년 주요 지진
-// ==========================
-
-
-let history=[
-
-
-{
-name:"🇯🇵 일본 도호쿠 대지진",
-year:"2011",
-mag:9.1,
-x:82,
-y:43,
-desc:"2011년 발생한 초대형 지진. 강력한 쓰나미 발생."
-},
-
-
-{
-name:"🇨🇱 칠레 지진",
-year:"2010",
-mag:8.8,
-x:30,
-y:66,
-desc:"세계 역사상 가장 강력한 지진 중 하나."
-},
-
-
-{
-name:"🇹🇷 튀르키예 지진",
-year:"2023",
-mag:7.8,
-x:60,
-y:40,
-desc:"대규모 피해를 발생시킨 강진."
-},
-
-
-{
-name:"🇳🇿 뉴질랜드 지진",
-year:"2016",
-mag:7.8,
-x:86,
-y:67,
-desc:"뉴질랜드 남섬 부근 발생."
-},
-
-
-{
-name:"🇲🇲 미얀마 지진",
-year:"2025",
-mag:7.7,
-x:72,
-y:52,
-desc:"강한 흔들림이 발생한 대형 지진."
-}
-
-];
-
-
-
-
-
-function createDot(data){
-
-
-let dot=document.createElement("div");
-
-
-dot.className="quake";
-
-
-let size=data.mag*4;
-
-
-dot.style.width=size+"px";
-
-dot.style.height=size+"px";
-
-
-dot.style.left=data.x+"%";
-
-dot.style.top=data.y+"%";
-
-
-
-dot.onclick=function(){
-
-
-info.style.display="block";
-
-
-info.innerHTML=
-
-"<h3>"+data.name+"</h3>"+
-
-"규모 : M"+data.mag+
-
-"<br>"+
-
-(data.time?
-"발생 시간 : "+data.time+"<br>":
-"발생년도 : "+data.year+"<br>")+
-
-"<br>"+
-
-data.desc;
-
-
-
-};
-
-
-
-map.appendChild(dot);
-
-
-}
-
-
-
-history.forEach(createDot);
-
-
-
-
-
-// ==========================
-// 실시간 지진
-// ==========================
-
-
-function loadRealEarthquake(){
-
-
-fetch(
-"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
-)
-
-
-.then(res=>res.json())
-
-
-.then(data=>{
-
-
-list.innerHTML="<b>🌋 최근 실시간 지진</b><br><br>";
-
-
-
-data.features.slice(0,15).forEach(q=>{
-
-
-let p=q.properties;
-
-let c=q.geometry.coordinates;
-
-
-
-let time=new Date(p.time);
-
-
-
-let quake={
-
-
-name:"🌋 "+p.place,
-
-
-mag:p.mag,
-
-
-x:(c[0]+180)/360*100,
-
-
-y:(90-c[1])/180*100,
-
-
-time:time.toLocaleString("ko-KR"),
-
-
-desc:"USGS 실시간 관측 데이터"
-
-};
-
-
-
-createDot(quake);
-
-
-
-list.innerHTML+=
-
-"🌋 "+p.place+
-"<br>"+
-"규모 : M"+p.mag+
-"<br>"+
-"시간 : "+
-time.toLocaleString("ko-KR")+
-"<br><br>";
-
-
-
-});
-
-
-
-})
-
-.catch(()=>{
-
-list.innerHTML=
-"실시간 데이터를 불러오지 못했습니다.";
-
-});
-
-
-}
-
-
-
-
-
-loadRealEarthquake();
-
-
-// 10분마다 새로 업데이트
-
-setInterval(
-loadRealEarthquake,
-600000
-);
-
-
-
-</script>
-
-
-</body>
-</html>
