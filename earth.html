@@ -2,30 +2,31 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>세계 지도 모델링</title>
+<title>세계 지진 모델링</title>
 
 <style>
 
 body{
     margin:0;
     overflow:hidden;
-    background:black;
-    font-family:"Malgun Gothic";
+    background:#ccc;
 }
 
-
-/* 세계지도 배경 */
 
 #map{
 
     width:100vw;
     height:100vh;
 
-    background-image:url("worldmap.png");
+    background-image:url("./worldmap.png");
 
-    background-size:cover;
+    background-size:contain;
+
+    background-repeat:no-repeat;
 
     background-position:center;
+
+    background-color:#ccc;
 
     position:relative;
 
@@ -37,40 +38,46 @@ body{
 
 #title{
 
-    position:absolute;
+position:absolute;
 
-    top:20px;
+top:20px;
 
-    left:30px;
+left:50%;
 
-    color:white;
+transform:translateX(-50%);
 
-    font-size:35px;
+font-size:35px;
 
-    text-shadow:3px 3px 5px black;
+color:white;
+
+background:rgba(0,0,0,0.6);
+
+padding:15px 30px;
+
+border-radius:15px;
 
 }
 
 
 
-/* 지진 표시 점 */
+/* 지진 표시 */
 
-.earthquake{
+.quake{
 
-    width:18px;
+position:absolute;
 
-    height:18px;
+width:20px;
 
-    background:red;
+height:20px;
 
-    border-radius:50%;
+background:red;
 
-    position:absolute;
+border-radius:50%;
 
-    box-shadow:
-    0 0 15px red;
+box-shadow:
+0 0 20px red;
 
-    animation:pulse 1s infinite;
+animation:pulse 1s infinite;
 
 }
 
@@ -79,22 +86,22 @@ body{
 @keyframes pulse{
 
 0%{
-transform:scale(1);
+scale:1;
 }
 
 50%{
-transform:scale(1.5);
+scale:1.8;
 }
 
 100%{
-transform:scale(1);
+scale:1;
 }
 
 }
 
 
 
-/* 설명창 */
+/* 설명 */
 
 #info{
 
@@ -108,14 +115,13 @@ background:rgba(0,0,0,0.7);
 
 color:white;
 
+font-size:20px;
+
 padding:15px;
 
 border-radius:10px;
 
-font-size:20px;
-
 }
-
 
 
 </style>
@@ -130,7 +136,7 @@ font-size:20px;
 
 
 <div id="title">
-🌎 세계 지진 모델링 지도
+🌎 세계 지진 모델링
 </div>
 
 
@@ -138,23 +144,23 @@ font-size:20px;
 <!-- 지진 위치 -->
 
 
-<div class="earthquake"
-style="left:52%; top:42%;">
+<div class="quake"
+style="left:53%;top:43%;">
 </div>
 
 
-<div class="earthquake"
-style="left:76%; top:48%;">
+<div class="quake"
+style="left:76%;top:48%;">
 </div>
 
 
-<div class="earthquake"
-style="left:34%; top:55%;">
+<div class="quake"
+style="left:31%;top:55%;">
 </div>
 
 
-<div class="earthquake"
-style="left:65%; top:35%;">
+<div class="quake"
+style="left:68%;top:38%;">
 </div>
 
 
@@ -162,69 +168,14 @@ style="left:65%; top:35%;">
 <div id="info">
 
 🔴 빨간 점 : 지진 발생 위치<br>
-
-🌍 세계 주요 지진대 표시<br>
-
-마우스로 지도를 확대해서 확인 가능
-
-</div>
-
+🌍 네가 제공한 세계지도 사용
 
 </div>
 
 
 
-<script>
+</div>
 
-
-// 마우스 확대 기능
-
-
-let map=document.getElementById("map");
-
-
-let scale=1;
-
-
-
-map.addEventListener("wheel",function(e){
-
-
-e.preventDefault();
-
-
-if(e.deltaY<0){
-
-scale+=0.1;
-
-}
-
-else{
-
-scale-=0.1;
-
-}
-
-
-
-if(scale<1)
-scale=1;
-
-
-if(scale>3)
-scale=3;
-
-
-
-map.style.backgroundSize=
-(scale*100)+"%";
-
-
-});
-
-
-
-</script>
 
 
 </body>
